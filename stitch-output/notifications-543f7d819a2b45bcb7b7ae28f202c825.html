@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>VendorProof | Alerts</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#434652",
+                    "surface-container-high": "#282a2b",
+                    "on-surface": "#e1e3e4",
+                    "surface-container-low": "#191c1d",
+                    "surface-container": "#1d2021",
+                    "primary-container": "#2dd4bf",
+                    "on-secondary-fixed": "#171b26",
+                    "on-primary-container": "#00574d",
+                    "error-container": "#93000a",
+                    "on-primary-fixed-variant": "#005047",
+                    "surface-tint": "#3cddc7",
+                    "primary-fixed-dim": "#3cddc7",
+                    "secondary": "#c3c6d4",
+                    "tertiary-container": "#b7bed2",
+                    "surface-container-lowest": "#0c0f10",
+                    "primary-fixed": "#62fae3",
+                    "inverse-on-surface": "#2e3132",
+                    "inverse-surface": "#e1e3e4",
+                    "error": "#ffb4ab",
+                    "secondary-fixed-dim": "#c3c6d4",
+                    "tertiary-fixed": "#dce2f7",
+                    "on-secondary": "#2c303b",
+                    "on-tertiary-fixed-variant": "#404758",
+                    "on-primary": "#003731",
+                    "surface-variant": "#323536",
+                    "surface": "#111415",
+                    "outline-variant": "#3c4a46",
+                    "on-tertiary-fixed": "#141b2b",
+                    "secondary-fixed": "#dfe2f1",
+                    "on-surface-variant": "#bacac5",
+                    "inverse-primary": "#006b5f",
+                    "surface-dim": "#111415",
+                    "secondary-container": "#454955",
+                    "on-tertiary": "#293040",
+                    "tertiary": "#d3daef",
+                    "background": "#111415",
+                    "on-background": "#e1e3e4",
+                    "on-primary-fixed": "#00201c",
+                    "on-error-container": "#ffdad6",
+                    "on-error": "#690005",
+                    "surface-bright": "#373a3b",
+                    "tertiary-fixed-dim": "#c0c6db",
+                    "primary": "#57f1db",
+                    "on-tertiary-container": "#464d5e",
+                    "on-secondary-container": "#b5b8c6",
+                    "outline": "#859490",
+                    "surface-container-highest": "#323536"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "container-padding-desktop": "32px",
+                    "container-padding-mobile": "16px",
+                    "base": "8px",
+                    "stack-lg": "24px",
+                    "gutter": "16px",
+                    "stack-md": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "display": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "300"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "300"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0B0F19; /* Surface 0 as per Style Guidance */
+            color: #e1e3e4;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .glass-header {
+            background: rgba(17, 20, 21, 0.8);
+            backdrop-filter: blur(12px);
+        }
+
+        .notification-card {
+            background-color: #111827; /* Surface 1 as per Style Guidance */
+            border: 1px solid #1F2937;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .notification-card:hover {
+            border-color: rgba(87, 241, 219, 0.3); /* Primary Electric Teal at 30% */
+            transform: translateY(-1px);
+        }
+
+        .unread-indicator {
+            width: 8px;
+            height: 8px;
+            background-color: #ffb4ab; /* Error color for urgency */
+            border-radius: 9999px;
+            box-shadow: 0 0 8px rgba(255, 180, 171, 0.5);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Status Badge Tonal Layering */
+        .badge-warning {
+            background-color: rgba(211, 218, 239, 0.1);
+            color: #d3daef;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1F2937;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen pb-24 md:pb-0 md:pl-0">
+<!-- TopAppBar from JSON -->
+<header class="sticky top-0 z-40 w-full glass-header">
+<div class="flex justify-between items-center w-full px-container-padding-mobile md:px-container-padding-desktop py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A professional close-up corporate headshot of a female property manager with a confident and focused expression. The lighting is sophisticated and moody, consistent with a high-end dark-themed SaaS interface. The background is a blurred, modern executive office with deep navy and electric teal accents, reflecting a vigilant and dependable brand personality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRdWJaPuGC-E7AfP-P7yam8Q3PUq_BbTu8hgxVBZB8Q1hwaVWSP00R9BAy28dKOCNcml2NIZv6UJjLxO8czX5nh4hpEVVrx2X9DR2xU3vzObxzHlU3i-6jeHkBazsLkCHWLrxqwlWv8b0a91Jq2p7KfFJ6cGhyhjoOfj2olXyBxWnK0EJgws3sjuDeuJce5ORjoH5ecclXuNo5nTsIXGd5_Eh4DvMFL-cHzZ8IuXCoaVGEL158nlnfJA"/>
+</div>
+<h1 class="text-title-lg font-title-lg font-bold text-primary dark:text-primary">VendorProof</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary dark:text-primary hover:opacity-80 active:scale-95 duration-100 p-2">search</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 w-full max-w-3xl mx-auto px-container-padding-mobile md:px-container-padding-desktop py-stack-lg">
+<!-- Section: Header -->
+<div class="flex justify-between items-end mb-stack-lg">
+<div>
+<h2 class="text-headline-md font-headline-md text-on-surface">Alerts</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Stay updated on compliance status</p>
+</div>
+<button class="text-label-md font-label-md text-primary flex items-center gap-1 hover:opacity-80 transition-opacity">
+                Mark all read
+            </button>
+</div>
+<!-- Date Group: Today -->
+<section class="mb-stack-lg">
+<h3 class="text-label-sm font-label-sm text-outline mb-stack-sm flex items-center gap-2">
+<span>TODAY</span>
+<div class="h-[1px] flex-1 bg-outline-variant/30"></div>
+</h3>
+<div class="space-y-stack-md">
+<!-- Notification Item 1 (Unread) -->
+<div class="notification-card p-stack-md rounded-xl flex gap-4 relative group cursor-pointer overflow-hidden">
+<div class="flex-shrink-0 mt-1">
+<div class="unread-indicator"></div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<span class="text-label-sm font-label-sm text-primary uppercase">Critical Warning</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">2h ago</span>
+</div>
+<p class="text-body-md font-body-md text-on-surface leading-tight">
+                            COI for <span class="font-bold text-primary">Apex Roofing</span> at <span class="text-on-surface-variant">Harbor View Apartments</span> expires in 7 days.
+                        </p>
+<div class="mt-4 flex gap-2">
+<button class="px-4 py-2 bg-primary text-on-primary rounded-lg text-label-md font-label-md hover:opacity-90 active:scale-95 transition-all">Renew COI</button>
+<button class="px-4 py-2 border border-outline-variant text-on-surface rounded-lg text-label-md font-label-md hover:bg-surface-variant/20 transition-all">Remind Vendor</button>
+</div>
+</div>
+</div>
+<!-- Notification Item 2 (Unread) -->
+<div class="notification-card p-stack-md rounded-xl flex gap-4 relative group cursor-pointer overflow-hidden">
+<div class="flex-shrink-0 mt-1">
+<div class="unread-indicator"></div>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<span class="text-label-sm font-label-sm text-primary uppercase">Critical Warning</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">5h ago</span>
+</div>
+<p class="text-body-md font-body-md text-on-surface leading-tight">
+                            COI for <span class="font-bold text-primary">Titan Security</span> at <span class="text-on-surface-variant">Oakwood Plaza</span> expires in 7 days.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Date Group: Yesterday -->
+<section>
+<h3 class="text-label-sm font-label-sm text-outline mb-stack-sm flex items-center gap-2">
+<span>YESTERDAY</span>
+<div class="h-[1px] flex-1 bg-outline-variant/30"></div>
+</h3>
+<div class="space-y-stack-md">
+<!-- Notification Item 3 (Read) -->
+<div class="notification-card p-stack-md rounded-xl flex gap-4 relative group cursor-pointer overflow-hidden opacity-80">
+<div class="flex-shrink-0 mt-1 w-2"></div> <!-- Spacer for unread alignment -->
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase">Update</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">1d ago</span>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant leading-tight">
+                            COI for <span class="font-medium">Elite Landscaping</span> at <span class="text-on-surface-variant">Pacific Heights</span> has been successfully updated and verified.
+                        </p>
+</div>
+</div>
+<!-- Notification Item 4 (Read) -->
+<div class="notification-card p-stack-md rounded-xl flex gap-4 relative group cursor-pointer overflow-hidden opacity-80">
+<div class="flex-shrink-0 mt-1 w-2"></div>
+<div class="flex-1">
+<div class="flex justify-between items-start mb-1">
+<span class="text-label-sm font-label-sm text-on-surface-variant uppercase">Critical Warning</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">1d ago</span>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant leading-tight">
+                            COI for <span class="font-medium">Silver Star Plumbing</span> at <span class="text-on-surface-variant">Emerald Towers</span> expires in 7 days.
+                        </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Empty State Visualization (Micro-interaction hint) -->
+<div class="hidden flex flex-col items-center justify-center py-20 text-center" id="empty-state">
+<span class="material-symbols-outlined text-outline text-[64px] mb-4">notifications_off</span>
+<h4 class="text-title-lg font-title-lg text-on-surface">All caught up!</h4>
+<p class="text-body-md font-body-md text-on-surface-variant mt-2 max-w-xs">There are no new alerts or compliance issues that require your attention right now.</p>
+</div>
+</main>
+<!-- BottomNavBar from JSON -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe bg-surface-container/80 dark:bg-surface-container/80 backdrop-blur-xl border-t border-outline-variant shadow-lg z-50">
+<!-- Dashboard -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-sm font-label-sm">Dashboard</span>
+</a>
+<!-- Properties -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary group" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="text-label-sm font-label-sm">Properties</span>
+</a>
+<!-- Vendors -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary group" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="text-label-sm font-label-sm">Vendors</span>
+</a>
+<!-- Alerts (ACTIVE) -->
+<a class="flex flex-col items-center justify-center bg-primary-container/20 text-primary rounded-xl px-3 py-1 scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="text-label-sm font-label-sm">Alerts</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary group" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-label-sm font-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for notification cards
+        document.querySelectorAll('.notification-card').forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.transform = 'scale(0.98)';
+            });
+            card.addEventListener('mouseup', () => {
+                card.style.transform = 'translateY(-1px)';
+            });
+            card.addEventListener('click', () => {
+                const indicator = card.querySelector('.unread-indicator');
+                if (indicator) {
+                    indicator.classList.add('transition-opacity', 'duration-500', 'opacity-0');
+                    setTimeout(() => {
+                        indicator.remove();
+                        card.classList.add('opacity-80');
+                    }, 500);
+                }
+            });
+        });
+
+        // Simple function to mark all read
+        const markAllBtn = document.querySelector('button.text-primary');
+        markAllBtn.addEventListener('click', () => {
+            document.querySelectorAll('.unread-indicator').forEach(indicator => {
+                indicator.parentElement.remove();
+            });
+            document.querySelectorAll('.notification-card').forEach(card => {
+                card.classList.add('opacity-80');
+            });
+        });
+    </script>
+</body></html>

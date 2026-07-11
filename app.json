@@ -1,0 +1,70 @@
+{
+  "expo": {
+    "name": "VendorProof Mobile",
+    "slug": "vendor-proof-amgg0etobdgndtf3nqnt",
+    "scheme": "vendorproof",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#05070d"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.vendorproof.mobile",
+      "infoPlist": {
+        "NSCameraUsageDescription": "VendorProof uses the camera to capture compliance documents for internal review.",
+        "NSPhotoLibraryUsageDescription": "VendorProof lets you select existing document photos for upload.",
+        "NSUserNotificationsUsageDescription": "VendorProof sends compliance reminders and document review alerts."
+      }
+    },
+    "android": {
+      "package": "com.vendorproof.mobile",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#05070d"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "VendorProof uses the camera to capture compliance documents for internal review."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "VendorProof lets you select existing document photos for upload."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#22f2d2"
+        }
+      ],
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "99543824-0f03-4576-8942-bef2b9c68602"
+      }
+    },
+    "owner": "syed3410s-team"
+  }
+}

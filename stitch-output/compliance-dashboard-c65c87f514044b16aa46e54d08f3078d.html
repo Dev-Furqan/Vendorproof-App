@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>VendorProof | Compliance Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "on-secondary-fixed-variant": "#434652",
+                "surface-container-high": "#282a2b",
+                "on-surface": "#e1e3e4",
+                "surface-container-low": "#191c1d",
+                "surface-container": "#1d2021",
+                "primary-container": "#2dd4bf",
+                "on-secondary-fixed": "#171b26",
+                "on-primary-container": "#00574d",
+                "error-container": "#93000a",
+                "on-primary-fixed-variant": "#005047",
+                "surface-tint": "#3cddc7",
+                "primary-fixed-dim": "#3cddc7",
+                "secondary": "#c3c6d4",
+                "tertiary-container": "#b7bed2",
+                "surface-container-lowest": "#0c0f10",
+                "primary-fixed": "#62fae3",
+                "inverse-on-surface": "#2e3132",
+                "inverse-surface": "#e1e3e4",
+                "error": "#ffb4ab",
+                "secondary-fixed-dim": "#c3c6d4",
+                "tertiary-fixed": "#dce2f7",
+                "on-secondary": "#2c303b",
+                "on-tertiary-fixed-variant": "#404758",
+                "on-primary": "#003731",
+                "surface-variant": "#323536",
+                "surface": "#111415",
+                "outline-variant": "#3c4a46",
+                "on-tertiary-fixed": "#141b2b",
+                "secondary-fixed": "#dfe2f1",
+                "on-surface-variant": "#bacac5",
+                "inverse-primary": "#006b5f",
+                "surface-dim": "#111415",
+                "secondary-container": "#454955",
+                "on-tertiary": "#293040",
+                "tertiary": "#d3daef",
+                "background": "#111415",
+                "on-background": "#e1e3e4",
+                "on-primary-fixed": "#00201c",
+                "on-error-container": "#ffdad6",
+                "on-error": "#690005",
+                "surface-bright": "#373a3b",
+                "tertiary-fixed-dim": "#c0c6db",
+                "primary": "#57f1db",
+                "on-tertiary-container": "#464d5e",
+                "on-secondary-container": "#b5b8c6",
+                "outline": "#859490",
+                "surface-container-highest": "#323536"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "stack-sm": "8px",
+                "container-padding-desktop": "32px",
+                "container-padding-mobile": "16px",
+                "base": "8px",
+                "stack-lg": "24px",
+                "gutter": "16px",
+                "stack-md": "16px"
+            },
+            "fontFamily": {
+                "body-md": ["Inter"],
+                "label-sm": ["Inter"],
+                "headline-lg-mobile": ["Inter"],
+                "headline-lg": ["Inter"],
+                "title-lg": ["Inter"],
+                "display": ["Inter"],
+                "body-lg": ["Inter"],
+                "label-md": ["Inter"],
+                "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "300"}],
+                "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "300"}],
+                "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0B0F19; /* From Style Guidance Surface 0 */
+            color: #e1e3e4;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .pull-to-refresh {
+            height: 0;
+            overflow: hidden;
+            transition: height 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .ptr-active .pull-to-refresh {
+            height: 60px;
+        }
+        .card-border {
+            border: 1px solid #1F2937;
+            background-color: #111827;
+        }
+        .card-border:hover {
+            border-color: rgba(45, 212, 191, 0.3);
+        }
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        /* Custom scrollbar for subtle aesthetic */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0F19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1F2937;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md pb-24">
+<!-- Top AppBar (from JSON) -->
+<header class="sticky top-0 z-40 bg-surface/90 backdrop-blur-md flex justify-between items-center w-full px-4 md:px-8 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a property manager named Alex, looking confident and approachable. The lighting is soft and corporate, with a background showing a blurred modern office interior with glass walls and minimalist furniture. The color palette is composed of deep navies and sharp whites, matching a high-end SaaS application aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBb2vQjAcdQ7pf87X1B_u8NVHLrinaaly3fQGCuCNjRDuMEP28z7EFCN8urKBC2BXIG6h5YNH_hqBUUbrbB4Jkx-ijx0xFACYkXgW2vENlWDrj1E0L8X4QPrvURvvQ0bf6j5NosnzaQMF9XQbhqA0euPj0GkkJl66n_y6mq00Ho1_qellEPd1fxe_-HJIJv860ELt8SEH6kp3KBNE63-BcgexzmXsfryfkMyUfMcpuurCTHwMIYIioJiA"/>
+</div>
+<div class="flex flex-col">
+<span class="text-label-md font-label-md text-on-surface-variant">Good Morning, Alex</span>
+<span class="text-title-lg font-title-lg font-bold text-primary">VendorProof</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary hover:opacity-80 active:scale-95 duration-100">search</button>
+<button class="material-symbols-outlined text-primary hover:opacity-80 active:scale-95 duration-100">tune</button>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-4 md:px-8 space-y-stack-lg pt-4" id="main-content">
+<!-- Pull to Refresh Indicator (Simulated) -->
+<div class="pull-to-refresh text-primary">
+<span class="material-symbols-outlined animate-spin">refresh</span>
+</div>
+<!-- Greeting & Sub-brand -->
+<section class="flex flex-col">
+<h1 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg text-on-surface">Skyline Properties</h1>
+<p class="text-body-md text-on-surface-variant">Real-time compliance overview</p>
+</section>
+<!-- Hero Stats Row (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Compliant -->
+<div class="card-border rounded-xl p-6 flex flex-col justify-between group transition-all duration-300">
+<div class="flex justify-between items-start">
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Compliant</span>
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="mt-4">
+<span class="text-display font-display text-primary">142</span>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1">+4 from last week</p>
+</div>
+</div>
+<!-- Expiring -->
+<div class="card-border rounded-xl p-6 flex flex-col justify-between group transition-all duration-300">
+<div class="flex justify-between items-start">
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Expiring</span>
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div class="mt-4">
+<span class="text-display font-display text-tertiary">12</span>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1">Next 30 days</p>
+</div>
+</div>
+<!-- Missing -->
+<div class="card-border rounded-xl p-6 flex flex-col justify-between group transition-all duration-300 border-error/20">
+<div class="flex justify-between items-start">
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Missing</span>
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+<div class="mt-4">
+<span class="text-display font-display text-error">4</span>
+<p class="text-label-sm font-label-sm text-error mt-1 font-bold">Action Required</p>
+</div>
+</div>
+</section>
+<!-- Needs Attention Section -->
+<section class="space-y-stack-md pb-8">
+<div class="flex justify-between items-center">
+<h2 class="text-headline-md font-headline-md text-on-surface">Needs Attention</h2>
+<button class="text-label-md font-label-md text-primary hover:underline">View All</button>
+</div>
+<div class="flex flex-col gap-4">
+<!-- Vendor Card 1 -->
+<div class="card-border rounded-xl p-4 flex items-center justify-between group cursor-pointer transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A minimalist architectural company logo for 'Atlas Elevators' featuring stylized geometric lines in a professional teal and slate grey color palette. The logo is centered on a clean dark grey background, representing high-stakes corporate infrastructure and reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8mGY9qY-peQmD2eNYK2jziVRbzcU4uTBgP4WPDMYoKG69DbcXgehFxwM7b_4WiRH5xVlbIt_yS8p9seE1D4ZhePC0XNjutEzNZaJwLYBmn4_QWiGJom-QJmluARf_4bg-fFt9geRSvGU4XOoiphUk6FPFg2t08qxWq8jIcwRtaNaa-kR4fiZtCkt4IH5F4An4iWOMiPYFGeNBeTM2-_M973y8YfG4nWCeOQ30DKMvXhkmV5A-9lDIIQ"/>
+</div>
+<div>
+<h3 class="text-body-md font-semibold text-on-surface">Atlas Elevators Inc.</h3>
+<p class="text-label-sm font-label-sm text-on-surface-variant">The Grandview Residences</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-label-sm font-label-sm border border-tertiary/20">
+<span class="status-dot bg-tertiary"></span>
+                            Expiring in 3 days
+                        </span>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+</div>
+<!-- Vendor Card 2 -->
+<div class="card-border rounded-xl p-4 flex items-center justify-between group cursor-pointer transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A corporate identity logo for 'SafeShield Security' featuring a bold, minimalist shield emblem. The design uses sharp edges and a sophisticated palette of deep charcoal and vibrant electric teal. The visual style is modern corporate, emphasizing safety and dependable surveillance services for property management." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOwvuQiQOq4u6hrb1k1GzEyz9fc_577heRyLsajAGEq5nQRajKNvjv4KvUFrPVnsmSjWCJ9Y2ddjRKj3fU2TFskXL-fxkTHjHnuZrrbD4UzPohZU0jqXGFSHhy8g3CqKepD8QtfmL4n9pA9F4ykF79M_Hv8jk51MgaYRhiMnoNme55m9QVFahK3OsqZutPhaPse1IrE-UTIF-JnnuRrkCMM3wXlZCKs-YmiS5qdnT6PltQ2ynf1bDkuA"/>
+</div>
+<div>
+<h3 class="text-body-md font-semibold text-on-surface">SafeShield Security</h3>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Harbor Point Plaza</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error/10 text-error text-label-sm font-label-sm border border-error/20">
+<span class="status-dot bg-error"></span>
+                            Insurance Lapsed
+                        </span>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+</div>
+<!-- Vendor Card 3 -->
+<div class="card-border rounded-xl p-4 flex items-center justify-between group cursor-pointer transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A clean, modern logo for 'GreenScape Landscaping' displaying a minimalist leaf motif combined with professional structural lines. The aesthetic is sophisticated and corporate, utilizing muted forest greens and dark navies against a charcoal background. The mood is precise, eco-friendly, and authoritative." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANEQmpX7PNw2MDdj5gvTAexguxlvZwT7ft4egeBuEkk07hXvaRsoGgQ2wKyhqYchm-mraMuznibVgpq_5IjVyFuppc2Kw_H_eaVyj6M6n6mjj-YBVbzPMlUUa-Smyg-07sBENZjyfII2VKmcUYV96uKtH9ag-s7WstXjSBTz22gQvnekH0KqxruchMxcjPDhhwXYjqJIw5zjqMNiYwJlinEEQMugaXQKm8K-pPtlJA8VTS1KKLJ_NLyQ"/>
+</div>
+<div>
+<h3 class="text-body-md font-semibold text-on-surface">GreenScape Landscaping</h3>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Skyline Corporate Park</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-label-sm font-label-sm border border-tertiary/20">
+<span class="status-dot bg-tertiary"></span>
+                            Expiring in 5 days
+                        </span>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+</div>
+<!-- Vendor Card 4 -->
+<div class="card-border rounded-xl p-4 flex items-center justify-between group cursor-pointer transition-colors duration-200">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A sophisticated logo for 'Volt Services' electrical company, utilizing an abstract lightning bolt integrated into a modern circuit board pattern. The color scheme is a vibrant electric teal and deep night blue, conveying high-tech precision and professional expertise in the SaaS management field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLncqhRu_FNi1U3tbdP3NBfDok_KDd7J8b85ytM4R_JD-LptCUv1SSCEI8z8CGhze42iqXPSQEzuAXDZbNtlPD3IMXN-HecUT5Za4DhONL56wm9IHZTANKvxDM99-1o7ojw8_IFpweU_6FVir-qJ6x-C7qwqhCaIodBRVKkxZR8rfleEecVikGVtUf4M7EJsym5b4-UAajHG3JSUn5IOfral2kn7OjhsUZ6rpSskoHMtBdhIrll-9TYQ"/>
+</div>
+<div>
+<h3 class="text-body-md font-semibold text-on-surface">Volt Services LLC</h3>
+<p class="text-label-sm font-label-sm text-on-surface-variant">North Tower Towers</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error/10 text-error text-label-sm font-label-sm border border-error/20">
+<span class="status-dot bg-error"></span>
+                            COI Missing
+                        </span>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Floating Action Button (FAB) -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-[0_4px_20px_0_rgba(0,0,0,0.3)] flex items-center justify-center transition-transform active:scale-90 z-40">
+<span class="material-symbols-outlined text-[28px]">add</span>
+</button>
+<!-- Bottom Navigation Bar (from JSON) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe bg-surface-container/80 dark:bg-surface-container/80 backdrop-blur-xl border-t border-outline-variant shadow-lg z-50">
+<!-- Dashboard (Active) -->
+<a class="flex flex-col items-center justify-center bg-primary-container/20 text-primary rounded-xl px-3 py-1 scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-label-sm font-label-sm">Dashboard</span>
+</a>
+<!-- Properties -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="text-label-sm font-label-sm">Properties</span>
+</a>
+<!-- Vendors -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="text-label-sm font-label-sm">Vendors</span>
+</a>
+<!-- Alerts -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="text-label-sm font-label-sm">Alerts</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-label-sm font-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple Pull-to-Refresh simulation
+        let startY = 0;
+        const mainContent = document.getElementById('main-content');
+        const body = document.body;
+
+        body.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].pageY;
+        }, { passive: true });
+
+        body.addEventListener('touchmove', (e) => {
+            const currentY = e.touches[0].pageY;
+            const diff = currentY - startY;
+
+            if (window.scrollY === 0 && diff > 100) {
+                body.classList.add('ptr-active');
+            }
+        }, { passive: true });
+
+        body.addEventListener('touchend', () => {
+            if (body.classList.contains('ptr-active')) {
+                // Simulate loading
+                setTimeout(() => {
+                    body.classList.remove('ptr-active');
+                }, 1500);
+            }
+        });
+
+        // Add subtle click ripple effect to cards
+        document.querySelectorAll('.card-border').forEach(card => {
+            card.addEventListener('mousedown', function() {
+                this.classList.add('scale-[0.98]');
+            });
+            card.addEventListener('mouseup', function() {
+                this.classList.remove('scale-[0.98]');
+            });
+            card.addEventListener('mouseleave', function() {
+                this.classList.remove('scale-[0.98]');
+            });
+        });
+    </script>
+</body></html>

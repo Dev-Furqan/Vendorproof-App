@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Vendors - VendorProof</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#434652",
+                    "surface-container-high": "#282a2b",
+                    "on-surface": "#e1e3e4",
+                    "surface-container-low": "#191c1d",
+                    "surface-container": "#1d2021",
+                    "primary-container": "#2dd4bf",
+                    "on-secondary-fixed": "#171b26",
+                    "on-primary-container": "#00574d",
+                    "error-container": "#93000a",
+                    "on-primary-fixed-variant": "#005047",
+                    "surface-tint": "#3cddc7",
+                    "primary-fixed-dim": "#3cddc7",
+                    "secondary": "#c3c6d4",
+                    "tertiary-container": "#b7bed2",
+                    "surface-container-lowest": "#0c0f10",
+                    "primary-fixed": "#62fae3",
+                    "inverse-on-surface": "#2e3132",
+                    "inverse-surface": "#e1e3e4",
+                    "error": "#ffb4ab",
+                    "secondary-fixed-dim": "#c3c6d4",
+                    "tertiary-fixed": "#dce2f7",
+                    "on-secondary": "#2c303b",
+                    "on-tertiary-fixed-variant": "#404758",
+                    "on-primary": "#003731",
+                    "surface-variant": "#323536",
+                    "surface": "#111415",
+                    "outline-variant": "#3c4a46",
+                    "on-tertiary-fixed": "#141b2b",
+                    "secondary-fixed": "#dfe2f1",
+                    "on-surface-variant": "#bacac5",
+                    "inverse-primary": "#006b5f",
+                    "surface-dim": "#111415",
+                    "secondary-container": "#454955",
+                    "on-tertiary": "#293040",
+                    "tertiary": "#d3daef",
+                    "background": "#111415",
+                    "on-background": "#e1e3e4",
+                    "on-primary-fixed": "#00201c",
+                    "on-error-container": "#ffdad6",
+                    "on-error": "#690005",
+                    "surface-bright": "#373a3b",
+                    "tertiary-fixed-dim": "#c0c6db",
+                    "primary": "#57f1db",
+                    "on-tertiary-container": "#464d5e",
+                    "on-secondary-container": "#b5b8c6",
+                    "outline": "#859490",
+                    "surface-container-highest": "#323536"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "container-padding-desktop": "32px",
+                    "container-padding-mobile": "16px",
+                    "base": "8px",
+                    "stack-lg": "24px",
+                    "gutter": "16px",
+                    "stack-md": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "display": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "300"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "300"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0B0F19; /* Surface 0 from Brand Guide */
+            color: #e1e3e4;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            backdrop-filter: blur(20px);
+            background-color: rgba(17, 20, 21, 0.85);
+        }
+        .vendor-card {
+            background-color: #111827; /* Surface 1 */
+            border: 1px solid #1F2937;
+            transition: all 0.2s ease-in-out;
+        }
+        .vendor-card:active {
+            border-color: rgba(45, 212, 191, 0.3); /* Primary Teal 30% */
+            transform: scale(0.98);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-40 glass-header flex justify-between items-center w-full px-container-padding-mobile md:px-container-padding-desktop py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a corporate property manager, clean lighting, sharp focus, wearing business attire against a neutral architectural background, minimalist corporate aesthetic, high quality photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBt1RzukTqo20KWON_ApEBxjTPHfgMlud0WLYwCZTpTH9tr7Fp9xxiUrc1YTEnHkmzvrTiq5cgWdrcRwu6Lpb196ANB_FxSD_D2zF6umgiwDf0cjeq7OtexLrewnn6j48oyMIuMuhKU0qePMcnYCH3RtTXt0-60pDwJ3u-dVxZlP7zjuXQCBs7UjxVr9u_AL4LfW0y_9veYBcRUr0X-9RLr2NkqFkjPCwrEmZ7YSqDkKQ-45hx940BF6A"/>
+</div>
+<span class="text-title-lg font-title-lg font-bold text-primary">VendorProof</span>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface hover:opacity-80 active:scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="flex-grow pb-24 px-container-padding-mobile md:px-container-padding-desktop">
+<!-- Page Title -->
+<section class="mt-4 mb-stack-md">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-background">Vendors</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Manage compliance for 128 registered entities</p>
+</section>
+<!-- Search Bar -->
+<div class="relative mb-stack-md">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-[#030712] border border-outline-variant rounded-xl py-3 pl-12 pr-4 text-on-surface placeholder:text-on-surface-variant/50 focus:ring-1 focus:ring-primary focus:border-primary transition-all" placeholder="Search by name, ID or trade..." type="text"/>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-2 overflow-x-auto no-scrollbar mb-stack-lg -mx-4 px-4">
+<button class="flex-shrink-0 px-5 py-2 rounded-full bg-primary-container text-on-primary-container font-label-md text-label-md transition-all active:scale-95">All</button>
+<button class="flex-shrink-0 px-5 py-2 rounded-full bg-surface-container border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-all active:scale-95">Expiring Soon</button>
+<button class="flex-shrink-0 px-5 py-2 rounded-full bg-surface-container border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-all active:scale-95">Missing</button>
+<button class="flex-shrink-0 px-5 py-2 rounded-full bg-surface-container border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:bg-surface-variant transition-all active:scale-95">Compliant</button>
+</div>
+<!-- Vendor List (Bento-style scrollable rows) -->
+<div class="space-y-3">
+<!-- Vendor Row 1 -->
+<div class="vendor-card p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-size: 28px;">plumbing</span>
+</div>
+<div>
+<h3 class="font-title-lg text-label-md text-on-surface">Pristine Pipework LLC</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ID: V-9023 • Plumbing</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded flex items-center gap-1.5 bg-primary/10 text-primary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                        Compliant
+                    </span>
+<span class="text-[10px] text-on-surface-variant font-medium">Valid until Dec 2024</span>
+</div>
+</div>
+<!-- Vendor Row 2 -->
+<div class="vendor-card p-4 rounded-xl flex items-center justify-between border-error/20">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 28px;">electrical_services</span>
+</div>
+<div>
+<h3 class="font-title-lg text-label-md text-on-surface">VoltMaster Systems</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ID: V-8841 • Electrical</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded flex items-center gap-1.5 bg-error/10 text-error font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                        Missing
+                    </span>
+<span class="text-[10px] text-error/80 font-medium">COI Overdue</span>
+</div>
+</div>
+<!-- Vendor Row 3 -->
+<div class="vendor-card p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 28px;">hvac</span>
+</div>
+<div>
+<h3 class="font-title-lg text-label-md text-on-surface">Global HVAC Solutions</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ID: V-1102 • HVAC</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded flex items-center gap-1.5 bg-tertiary-fixed-dim/20 text-tertiary-fixed-dim font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                        Expiring Soon
+                    </span>
+<span class="text-[10px] text-on-surface-variant font-medium">14 days remaining</span>
+</div>
+</div>
+<!-- Vendor Row 4 -->
+<div class="vendor-card p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 28px;">imagesearch_roller</span>
+</div>
+<div>
+<h3 class="font-title-lg text-label-md text-on-surface">Apex Painting Co.</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ID: V-7762 • General</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded flex items-center gap-1.5 bg-primary/10 text-primary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                        Compliant
+                    </span>
+<span class="text-[10px] text-on-surface-variant font-medium">Valid until Feb 2025</span>
+</div>
+</div>
+<!-- Vendor Row 5 -->
+<div class="vendor-card p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 28px;">cleaning_services</span>
+</div>
+<div>
+<h3 class="font-title-lg text-label-md text-on-surface">Eco-Janitorial Services</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ID: V-5510 • Cleaning</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded flex items-center gap-1.5 bg-primary/10 text-primary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                        Compliant
+                    </span>
+<span class="text-[10px] text-on-surface-variant font-medium">Valid until Oct 2024</span>
+</div>
+</div>
+<!-- Vendor Row 6 -->
+<div class="vendor-card p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 28px;">construction</span>
+</div>
+<div>
+<h3 class="font-title-lg text-label-md text-on-surface">Foundation First Inc.</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">ID: V-4299 • Construction</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 rounded flex items-center gap-1.5 bg-primary/10 text-primary font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                        Compliant
+                    </span>
+<span class="text-[10px] text-on-surface-variant font-medium">Valid until Nov 2024</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe bg-surface-container/80 backdrop-blur-xl border-t border-outline-variant shadow-lg z-50">
+<!-- Dashboard -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm mt-1">Dashboard</span>
+</a>
+<!-- Properties -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+<span class="font-label-sm text-label-sm mt-1">Properties</span>
+</a>
+<!-- Vendors (ACTIVE) -->
+<a class="flex flex-col items-center justify-center bg-primary-container/20 text-primary rounded-xl px-3 py-1 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="engineering" style="font-variation-settings: 'FILL' 1;">engineering</span>
+<span class="font-label-sm text-label-sm mt-1">Vendors</span>
+</a>
+<!-- Alerts -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-all active:scale-90" href="#">
+<div class="relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-error rounded-full"></span>
+</div>
+<span class="font-label-sm text-label-sm mt-1">Alerts</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-sm text-label-sm mt-1">Profile</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for filter chips
+        const filterChips = document.querySelectorAll('button.rounded-full');
+        filterChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                filterChips.forEach(c => {
+                    c.classList.remove('bg-primary-container', 'text-on-primary-container');
+                    c.classList.add('bg-surface-container', 'border', 'border-outline-variant', 'text-on-surface-variant');
+                });
+                chip.classList.remove('bg-surface-container', 'border', 'border-outline-variant', 'text-on-surface-variant');
+                chip.classList.add('bg-primary-container', 'text-on-primary-container');
+            });
+        });
+
+        // Simple row entry animation
+        document.querySelectorAll('.vendor-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.4s ease-out';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
+    </script>
+</body></html>

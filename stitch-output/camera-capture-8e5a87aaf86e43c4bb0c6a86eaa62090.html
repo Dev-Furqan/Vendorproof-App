@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VendorProof - Document Capture</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#434652",
+                    "surface-container-high": "#282a2b",
+                    "on-surface": "#e1e3e4",
+                    "surface-container-low": "#191c1d",
+                    "surface-container": "#1d2021",
+                    "primary-container": "#2dd4bf",
+                    "on-secondary-fixed": "#171b26",
+                    "on-primary-container": "#00574d",
+                    "error-container": "#93000a",
+                    "on-primary-fixed-variant": "#005047",
+                    "surface-tint": "#3cddc7",
+                    "primary-fixed-dim": "#3cddc7",
+                    "secondary": "#c3c6d4",
+                    "tertiary-container": "#b7bed2",
+                    "surface-container-lowest": "#0c0f10",
+                    "primary-fixed": "#62fae3",
+                    "inverse-on-surface": "#2e3132",
+                    "inverse-surface": "#e1e3e4",
+                    "error": "#ffb4ab",
+                    "secondary-fixed-dim": "#c3c6d4",
+                    "tertiary-fixed": "#dce2f7",
+                    "on-secondary": "#2c303b",
+                    "on-tertiary-fixed-variant": "#404758",
+                    "on-primary": "#003731",
+                    "surface-variant": "#323536",
+                    "surface": "#111415",
+                    "outline-variant": "#3c4a46",
+                    "on-tertiary-fixed": "#141b2b",
+                    "secondary-fixed": "#dfe2f1",
+                    "on-surface-variant": "#bacac5",
+                    "inverse-primary": "#006b5f",
+                    "surface-dim": "#111415",
+                    "secondary-container": "#454955",
+                    "on-tertiary": "#293040",
+                    "tertiary": "#d3daef",
+                    "background": "#111415",
+                    "on-background": "#e1e3e4",
+                    "on-primary-fixed": "#00201c",
+                    "on-error-container": "#ffdad6",
+                    "on-error": "#690005",
+                    "surface-bright": "#373a3b",
+                    "tertiary-fixed-dim": "#c0c6db",
+                    "primary": "#57f1db",
+                    "on-tertiary-container": "#464d5e",
+                    "on-secondary-container": "#b5b8c6",
+                    "outline": "#859490",
+                    "surface-container-highest": "#323536"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "container-padding-desktop": "32px",
+                    "container-padding-mobile": "16px",
+                    "base": "8px",
+                    "stack-lg": "24px",
+                    "gutter": "16px",
+                    "stack-md": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "display": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "300"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "300"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .camera-overlay {
+            background: rgba(11, 15, 25, 0.6);
+            backdrop-filter: blur(2px);
+            mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="white"/><rect x="10%" y="20%" width="80%" height="55%" rx="16" fill="black"/></svg>') 0 0 / 100% 100%;
+            -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="white"/><rect x="10%" y="20%" width="80%" height="55%" rx="16" fill="black"/></svg>') 0 0 / 100% 100%;
+        }
+        
+        .corner-border {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-color: #57f1db;
+            border-width: 3px;
+        }
+
+        .shutter-ring {
+            transition: transform 0.1s ease-out;
+        }
+        .shutter-ring:active {
+            transform: scale(0.9);
+        }
+
+        .scan-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #57f1db, transparent);
+            box-shadow: 0 0 15px #57f1db;
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 20%; }
+            50% { top: 75%; }
+            100% { top: 20%; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background overflow-hidden font-body-md select-none">
+<!-- Camera Viewport Layer -->
+<div class="fixed inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center transition-opacity duration-700" data-alt="A POV shot from a high-end smartphone camera capturing a professional legal document on a dark mahogany desk. The lighting is focused and cinematic with a primary electric teal glow from the digital interface overlapping the scene. The overall mood is sophisticated, corporate, and precise, mirroring a modern SaaS application for property compliance." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBR2synB-iXMN-X7n-VasMSFAUwNznVhyP-X5wBsp_wrL-6bBRbHOBjJSHUJsBstDurIkkaqaQPrvwzMISYh-cLWCSCklMWWOzjfnSZ6GAR2wzYMatYTPU9qjto9fRvGmpyaI-ZJW3-R_QU6iXguj1sMY60NnjMd6md34_3VVbwLo2yBbLDwpJGPSqjdXSuyySwIHICUbg_S13uHnfTEkt2ChlkuBSS-Jd1MH5BjQU6SxGsA9KPB8apyw')"></div>
+</div>
+<!-- UI Overlay Layer -->
+<div class="fixed inset-0 z-10 flex flex-col justify-between">
+<!-- Top Controls: Header suppress navigation but provides context -->
+<header class="flex justify-between items-center px-container-padding-mobile pt-8 pb-4 bg-gradient-to-b from-background/80 to-transparent">
+<button class="p-2 rounded-full bg-surface-container/40 backdrop-blur-md text-on-surface hover:bg-surface-container-high transition-colors" onclick="window.history.back()">
+<span class="material-symbols-outlined">close</span>
+</button>
+<div class="text-center">
+<h1 class="font-headline-md text-headline-md text-white drop-shadow-md">Scan Document</h1>
+<p class="font-label-sm text-label-sm text-primary uppercase tracking-widest mt-1">Proof of Insurance</p>
+</div>
+<button class="p-2 rounded-full bg-surface-container/40 backdrop-blur-md text-on-surface">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</header>
+<!-- Viewfinder Center -->
+<div class="relative flex-grow flex items-center justify-center overflow-hidden">
+<!-- Semi-transparent mask -->
+<div class="absolute inset-0 camera-overlay"></div>
+<!-- Document Guide Frame -->
+<div class="relative w-[85%] h-[55%] pointer-events-none">
+<!-- Corners -->
+<div class="corner-border top-0 left-0 border-t border-l rounded-tl-xl"></div>
+<div class="corner-border top-0 right-0 border-t border-r rounded-tr-xl"></div>
+<div class="corner-border bottom-0 left-0 border-b border-l rounded-bl-xl"></div>
+<div class="corner-border bottom-0 right-0 border-b border-r rounded-br-xl"></div>
+<!-- Scanning Animation -->
+<div class="absolute left-0 right-0 scan-line"></div>
+<!-- Guidance Text -->
+<div class="absolute -bottom-16 left-0 right-0 text-center">
+<p class="font-label-md text-label-md text-on-surface bg-surface/40 backdrop-blur-xl inline-block px-4 py-2 rounded-full border border-outline-variant/30">
+                        Align document within the frame
+                    </p>
+</div>
+</div>
+</div>
+<!-- Bottom Controls -->
+<footer class="px-container-padding-mobile pb-12 pt-8 bg-gradient-to-t from-background/90 to-transparent flex items-center justify-around">
+<!-- Gallery Link -->
+<div class="flex flex-col items-center gap-2 group cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high/60 backdrop-blur-md border border-outline-variant flex items-center justify-center group-hover:border-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface" data-icon="photo_library">photo_library</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant group-hover:text-primary">Gallery</span>
+</div>
+<!-- Shutter Button -->
+<button class="relative w-20 h-20 flex items-center justify-center group" id="shutter">
+<div class="absolute inset-0 rounded-full border-4 border-white opacity-40 group-hover:scale-105 transition-transform duration-300"></div>
+<div class="w-16 h-16 rounded-full bg-white shutter-ring shadow-[0_0_20px_rgba(255,255,255,0.4)] flex items-center justify-center">
+<div class="w-[90%] h-[90%] rounded-full border border-surface/10"></div>
+</div>
+</button>
+<!-- Flash Toggle -->
+<div class="flex flex-col items-center gap-2 group cursor-pointer" id="flash-toggle" onclick="toggleFlash()">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high/60 backdrop-blur-md border border-outline-variant flex items-center justify-center transition-all duration-300" id="flash-icon-container">
+<span class="material-symbols-outlined text-on-surface" data-icon="flash_off" id="flash-icon">flash_off</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant group-hover:text-primary" id="flash-label">Flash Off</span>
+</div>
+</footer>
+</div>
+<!-- Haptic/Flash Feedback Element -->
+<div class="fixed inset-0 z-50 bg-white pointer-events-none opacity-0" id="screen-flash"></div>
+<script>
+        // Micro-interaction for Shutter
+        const shutter = document.getElementById('shutter');
+        const screenFlash = document.getElementById('screen-flash');
+
+        shutter.addEventListener('click', () => {
+            // Trigger Visual Flash
+            screenFlash.classList.remove('opacity-0');
+            screenFlash.classList.add('opacity-100');
+            
+            setTimeout(() => {
+                screenFlash.classList.remove('opacity-100');
+                screenFlash.classList.add('opacity-0');
+                // Simulate capture success with a subtle notification
+                console.log('Document Captured');
+            }, 100);
+        });
+
+        // Flash Toggle Logic
+        let flashActive = false;
+        function toggleFlash() {
+            flashActive = !flashActive;
+            const icon = document.getElementById('flash-icon');
+            const label = document.getElementById('flash-label');
+            const container = document.getElementById('flash-icon-container');
+
+            if (flashActive) {
+                icon.innerText = 'flash_on';
+                label.innerText = 'Flash On';
+                container.classList.add('border-primary');
+                container.classList.add('bg-primary/10');
+                icon.classList.add('text-primary');
+            } else {
+                icon.innerText = 'flash_off';
+                label.innerText = 'Flash Off';
+                container.classList.remove('border-primary');
+                container.classList.remove('bg-primary/10');
+                icon.classList.remove('text-primary');
+            }
+        }
+
+        // Perspective Parallax Micro-effect
+        document.addEventListener('mousemove', (e) => {
+            const viewport = document.querySelector('.relative.w-\\[85\\%\\]');
+            const x = (window.innerWidth / 2 - e.pageX) / 50;
+            const y = (window.innerHeight / 2 - e.pageY) / 50;
+            viewport.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+        });
+    </script>
+</body></html>

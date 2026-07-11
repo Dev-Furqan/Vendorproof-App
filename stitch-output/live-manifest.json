@@ -1,0 +1,369 @@
+{
+  "fetchedAt": "2026-07-10T13:03:21.312Z",
+  "project": {
+    "name": "projects/11220652658320380900",
+    "title": "VendorProof Compliance Manager",
+    "updateTime": "2026-07-10T12:58:00.208190Z",
+    "designTheme": {
+      "colorMode": "DARK",
+      "font": "INTER",
+      "roundness": "ROUND_EIGHT",
+      "customColor": "#2dd4bf",
+      "headlineFont": "INTER",
+      "bodyFont": "INTER",
+      "labelFont": "INTER",
+      "namedColors": {
+        "background": "#111415",
+        "error": "#ffb4ab",
+        "error_container": "#93000a",
+        "inverse_on_surface": "#2e3132",
+        "inverse_primary": "#006b5f",
+        "inverse_surface": "#e1e3e4",
+        "on_background": "#e1e3e4",
+        "on_error": "#690005",
+        "on_error_container": "#ffdad6",
+        "on_primary": "#003731",
+        "on_primary_container": "#00574d",
+        "on_primary_fixed": "#00201c",
+        "on_primary_fixed_variant": "#005047",
+        "on_secondary": "#2c303b",
+        "on_secondary_container": "#b5b8c6",
+        "on_secondary_fixed": "#171b26",
+        "on_secondary_fixed_variant": "#434652",
+        "on_surface": "#e1e3e4",
+        "on_surface_variant": "#bacac5",
+        "on_tertiary": "#293040",
+        "on_tertiary_container": "#464d5e",
+        "on_tertiary_fixed": "#141b2b",
+        "on_tertiary_fixed_variant": "#404758",
+        "outline": "#859490",
+        "outline_variant": "#3c4a46",
+        "primary": "#57f1db",
+        "primary_container": "#2dd4bf",
+        "primary_fixed": "#62fae3",
+        "primary_fixed_dim": "#3cddc7",
+        "secondary": "#c3c6d4",
+        "secondary_container": "#454955",
+        "secondary_fixed": "#dfe2f1",
+        "secondary_fixed_dim": "#c3c6d4",
+        "surface": "#111415",
+        "surface_bright": "#373a3b",
+        "surface_container": "#1d2021",
+        "surface_container_high": "#282a2b",
+        "surface_container_highest": "#323536",
+        "surface_container_low": "#191c1d",
+        "surface_container_lowest": "#0c0f10",
+        "surface_dim": "#111415",
+        "surface_tint": "#3cddc7",
+        "surface_variant": "#323536",
+        "tertiary": "#d3daef",
+        "tertiary_container": "#b7bed2",
+        "tertiary_fixed": "#dce2f7",
+        "tertiary_fixed_dim": "#c0c6db"
+      },
+      "designMd": "---\nname: Executive Compliance\ncolors:\n  surface: '#111415'\n  surface-dim: '#111415'\n  surface-bright: '#373a3b'\n  surface-container-lowest: '#0c0f10'\n  surface-container-low: '#191c1d'\n  surface-container: '#1d2021'\n  surface-container-high: '#282a2b'\n  surface-container-highest: '#323536'\n  on-surface: '#e1e3e4'\n  on-surface-variant: '#bacac5'\n  inverse-surface: '#e1e3e4'\n  inverse-on-surface: '#2e3132'\n  outline: '#859490'\n  outline-variant: '#3c4a46'\n  surface-tint: '#3cddc7'\n  primary: '#57f1db'\n  on-primary: '#003731'\n  primary-container: '#2dd4bf'\n  on-primary-container: '#00574d'\n  inverse-primary: '#006b5f'\n  secondary: '#c3c6d4'\n  on-secondary: '#2c303b'\n  secondary-container: '#454955'\n  on-secondary-container: '#b5b8c6'\n  tertiary: '#d3daef'\n  on-tertiary: '#293040'\n  tertiary-container: '#b7bed2'\n  on-tertiary-container: '#464d5e'\n  error: '#ffb4ab'\n  on-error: '#690005'\n  error-container: '#93000a'\n  on-error-container: '#ffdad6'\n  primary-fixed: '#62fae3'\n  primary-fixed-dim: '#3cddc7'\n  on-primary-fixed: '#00201c'\n  on-primary-fixed-variant: '#005047'\n  secondary-fixed: '#dfe2f1'\n  secondary-fixed-dim: '#c3c6d4'\n  on-secondary-fixed: '#171b26'\n  on-secondary-fixed-variant: '#434652'\n  tertiary-fixed: '#dce2f7'\n  tertiary-fixed-dim: '#c0c6db'\n  on-tertiary-fixed: '#141b2b'\n  on-tertiary-fixed-variant: '#404758'\n  background: '#111415'\n  on-background: '#e1e3e4'\n  surface-variant: '#323536'\ntypography:\n  display:\n    fontFamily: Inter\n    fontSize: 48px\n    fontWeight: '700'\n    lineHeight: 56px\n    letterSpacing: -0.02em\n  headline-lg:\n    fontFamily: Inter\n    fontSize: 32px\n    fontWeight: '600'\n    lineHeight: 40px\n    letterSpacing: -0.01em\n  headline-lg-mobile:\n    fontFamily: Inter\n    fontSize: 24px\n    fontWeight: '600'\n    lineHeight: 32px\n  headline-md:\n    fontFamily: Inter\n    fontSize: 24px\n    fontWeight: '600'\n    lineHeight: 32px\n  title-lg:\n    fontFamily: Inter\n    fontSize: 20px\n    fontWeight: '600'\n    lineHeight: 28px\n  body-lg:\n    fontFamily: Inter\n    fontSize: 18px\n    fontWeight: '300'\n    lineHeight: 28px\n  body-md:\n    fontFamily: Inter\n    fontSize: 16px\n    fontWeight: '300'\n    lineHeight: 24px\n  label-md:\n    fontFamily: Inter\n    fontSize: 14px\n    fontWeight: '500'\n    lineHeight: 20px\n    letterSpacing: 0.01em\n  label-sm:\n    fontFamily: Inter\n    fontSize: 12px\n    fontWeight: '600'\n    lineHeight: 16px\n    letterSpacing: 0.05em\nrounded:\n  sm: 0.25rem\n  DEFAULT: 0.5rem\n  md: 0.75rem\n  lg: 1rem\n  xl: 1.5rem\n  full: 9999px\nspacing:\n  base: 8px\n  container-padding-mobile: 16px\n  container-padding-desktop: 32px\n  gutter: 16px\n  stack-sm: 8px\n  stack-md: 16px\n  stack-lg: 24px\n---\n\n## Brand & Style\n\nThis design system is built for a high-stakes SaaS environment where precision and authority are paramount. The brand personality is **vigilant, sophisticated, and dependable**, designed to instill confidence in property managers handling complex legal and safety requirements. \n\nThe visual style follows a **Modern Corporate** direction with a **Minimalist** ethos. It utilizes a deep, dark canvas to reduce eye strain during long periods of data auditing, while using sharp, vibrant accents to draw attention to critical action items. The aesthetic relies on high-quality typography, generous white space (negative space), and subtle depth rather than heavy ornamentation. The emotional response should be one of \"controlled oversight\"—the user feels they have a clear, calm view of their entire portfolio's compliance status.\n\n## Colors\n\nThe palette is anchored by a \"Midnight Navy\" foundation to create a premium, high-contrast environment. \n\n- **Primary:** Electric Teal (#2DD4BF) is reserved exclusively for primary actions, active states, and highlights. It provides a luminous contrast against the dark background.\n- **Surface Tiers:** The background uses #0B0F19 (Deep Navy), while cards and elevated containers use #111827 (Charcoal) to create subtle structural hierarchy.\n- **Typography:** Off-white (#F9FAFB) is used for maximum readability, with reduced opacity variants for secondary metadata.\n- **Functional Colors:** Compliance statuses are strictly mapped to Red (Non-compliant/Overdue), Amber (Expiring soon/Warning), and Green (Compliant/Verified). These should be used with high saturation to stand out against the neutral dark surfaces.\n\n## Typography\n\nThe design system utilizes **Inter** exclusively to ensure a systematic and utilitarian feel. \n\n- **Weight Strategy:** Use `Light (300)` for long-form body text to maintain the premium, airy aesthetic. Use `Semi-Bold (600)` or `Bold (700)` for headlines and data points to create clear visual anchors.\n- **Rhythm:** Line heights are generous (minimum 1.5x for body) to improve legibility on mobile devices.\n- **Capitalization:** Use All-Caps with `Label-sm` for section headers or small metadata badges to differentiate them from interactive labels.\n\n## Layout & Spacing\n\nThis design system uses a **Fluid Grid** with a strict 8px spacing scale. \n\n- **Mobile:** A 4-column layout with 16px side margins and 16px gutters. Navigation is handled via a persistent bottom tab bar.\n- **Desktop:** A 12-column layout with a maximum content width of 1440px. Gutters expand to 24px for a more spacious, \"executive\" feel.\n- **Density:** High whitespace is preferred. Vertical stacks should default to 24px (stack-lg) between distinct logical sections and 8px (stack-sm) between related labels and inputs.\n\n## Elevation & Depth\n\nHierarchy is established through **Tonal Layering** and **Subtle Outlines** rather than aggressive shadows. \n\n- **Surface 0 (Background):** #0B0F19.\n- **Surface 1 (Cards/Modals):** #111827. These elements receive a 1px solid border of #1F2937 (a slightly lighter charcoal) to define their edges against the background.\n- **Shadows:** Use a single, soft ambient shadow for floating elements (like FABs or dropdowns). Shadow color should be pure black (#000000) at 30% opacity with a 20px blur and 4px offset.\n- **Interactive States:** When a card is hovered or pressed, the border color shifts to the primary Electric Teal at 30% opacity.\n\n## Shapes\n\nThe design system employs **Rounded** geometry to soften the technical nature of compliance data. \n\n- **Standard Containers:** Use a 12px radius (`rounded-lg`) for cards, input fields, and modals.\n- **Large Surfaces:** Dashboard \"hero\" sections or large layout containers use a 16px radius (`rounded-xl`).\n- **Interactive Elements:** Buttons and Status Badges use a full \"Pill\" radius for high touch-affordance and visual distinction from content containers.\n\n## Components\n\n- **Buttons:** Primary buttons are Solid Electric Teal with dark navy text. Secondary buttons use a ghost style (Teal border, no fill). All buttons have a minimum height of 48px for mobile accessibility.\n- **Status Badges:** Subtle background tints (10% opacity of the status color) with high-contrast text and a small 6px leading dot for quick scanning.\n- **Cards:** Cards should be border-only or subtly filled. They must include a clear header and 16px-24px internal padding.\n- **Input Fields:** Darker than the card surface (#030712), with a 1px border. The label sits above the field in `Label-md`. Active state is indicated by a Primary Teal border.\n- **Bottom Tab Bar:** Semi-transparent background with a heavy backdrop blur (20px). Active icons are Primary Teal; inactive icons are mid-grey.\n- **Empty States:** Use monochromatic, line-art illustrations centered in the viewport with a \"primary\" CTA button directly below the message.\n- **Loading:** Use Skeleton pulses with a gradient moving from #111827 to #1F2937.",
+      "colorVariant": "FIDELITY",
+      "overridePrimaryColor": "#2dd4bf",
+      "overrideSecondaryColor": "#0b0f19",
+      "overrideTertiaryColor": "#111827",
+      "overrideNeutralColor": "#f9fafb",
+      "spacingScale": 2,
+      "typography": {
+        "body-lg": {
+          "fontFamily": "Inter",
+          "fontSize": "18px",
+          "fontWeight": "300",
+          "lineHeight": "28px"
+        },
+        "body-md": {
+          "fontFamily": "Inter",
+          "fontSize": "16px",
+          "fontWeight": "300",
+          "lineHeight": "24px"
+        },
+        "display": {
+          "fontFamily": "Inter",
+          "fontSize": "48px",
+          "fontWeight": "700",
+          "lineHeight": "56px",
+          "letterSpacing": "-0.02em"
+        },
+        "headline-lg": {
+          "fontFamily": "Inter",
+          "fontSize": "32px",
+          "fontWeight": "600",
+          "lineHeight": "40px",
+          "letterSpacing": "-0.01em"
+        },
+        "headline-lg-mobile": {
+          "fontFamily": "Inter",
+          "fontSize": "24px",
+          "fontWeight": "600",
+          "lineHeight": "32px"
+        },
+        "headline-md": {
+          "fontFamily": "Inter",
+          "fontSize": "24px",
+          "fontWeight": "600",
+          "lineHeight": "32px"
+        },
+        "label-md": {
+          "fontFamily": "Inter",
+          "fontSize": "14px",
+          "fontWeight": "500",
+          "lineHeight": "20px",
+          "letterSpacing": "0.01em"
+        },
+        "label-sm": {
+          "fontFamily": "Inter",
+          "fontSize": "12px",
+          "fontWeight": "600",
+          "lineHeight": "16px",
+          "letterSpacing": "0.05em"
+        },
+        "title-lg": {
+          "fontFamily": "Inter",
+          "fontSize": "20px",
+          "fontWeight": "600",
+          "lineHeight": "28px"
+        }
+      },
+      "spacing": {
+        "base": "8px",
+        "container-padding-desktop": "32px",
+        "container-padding-mobile": "16px",
+        "gutter": "16px",
+        "stack-lg": "24px",
+        "stack-md": "16px",
+        "stack-sm": "8px"
+      },
+      "headlineFontFamily": "Inter",
+      "bodyFontFamily": "Inter",
+      "labelFontFamily": "Inter"
+    },
+    "screenInstances": [
+      {
+        "id": "0438ba14592a45c9a40660caf8e24e6c",
+        "sourceScreen": "projects/11220652658320380900/screens/0438ba14592a45c9a40660caf8e24e6c",
+        "x": 2840,
+        "width": 390,
+        "height": 884
+      },
+      {
+        "id": "08deebff06e442c3b3a0ef203cfdf238",
+        "sourceScreen": "projects/11220652658320380900/screens/08deebff06e442c3b3a0ef203cfdf238",
+        "x": 4656,
+        "width": 390,
+        "height": 884
+      },
+      {
+        "id": "543f7d819a2b45bcb7b7ae28f202c825",
+        "sourceScreen": "projects/11220652658320380900/screens/543f7d819a2b45bcb7b7ae28f202c825",
+        "x": 3748,
+        "width": 390,
+        "height": 884
+      },
+      {
+        "id": "7dde97ca79704f429aa8bc5620e99c7d",
+        "sourceScreen": "projects/11220652658320380900/screens/7dde97ca79704f429aa8bc5620e99c7d",
+        "x": 1478,
+        "width": 390,
+        "height": 884
+      },
+      {
+        "id": "7f22cf6a596e44479fd397bd82590cca",
+        "sourceScreen": "projects/11220652658320380900/screens/7f22cf6a596e44479fd397bd82590cca",
+        "x": 4202,
+        "width": 390,
+        "height": 884
+      },
+      {
+        "id": "8e5a87aaf86e43c4bb0c6a86eaa62090",
+        "sourceScreen": "projects/11220652658320380900/screens/8e5a87aaf86e43c4bb0c6a86eaa62090",
+        "x": 3294,
+        "width": 390,
+        "height": 884
+      },
+      {
+        "id": "a043f42a00874512b6b28e44affd4f1a",
+        "sourceScreen": "projects/11220652658320380900/screens/a043f42a00874512b6b28e44affd4f1a",
+        "x": 1024,
+        "width": 390,
+        "height": 884
+      },
+      {
+        "id": "assets_333b3ef7b3ac4197b2b8c961f2fc84b0",
+        "width": 960,
+        "height": 540,
+        "sourceAsset": "assets/333b3ef7b3ac4197b2b8c961f2fc84b0",
+        "type": "DESIGN_SYSTEM_INSTANCE"
+      },
+      {
+        "id": "b4e4526b51b2459385af5ac7fef726b4",
+        "sourceScreen": "projects/11220652658320380900/screens/b4e4526b51b2459385af5ac7fef726b4",
+        "x": 2386,
+        "width": 390,
+        "height": 884
+      },
+      {
+        "id": "c65c87f514044b16aa46e54d08f3078d",
+        "sourceScreen": "projects/11220652658320380900/screens/c65c87f514044b16aa46e54d08f3078d",
+        "x": 1932,
+        "width": 390,
+        "height": 884
+      }
+    ]
+  },
+  "screens": [
+    {
+      "id": "08deebff06e442c3b3a0ef203cfdf238",
+      "name": "projects/11220652658320380900/screens/08deebff06e442c3b3a0ef203cfdf238",
+      "title": "VendorProof Compliance Management",
+      "deviceType": "MOBILE",
+      "width": "390",
+      "height": "884",
+      "htmlCode": {
+        "name": "projects/11220652658320380900/screens/08deebff06e442c3b3a0ef203cfdf238/fileEntries/html",
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1NjJkODIxMTYzYWQwNDRmNjhmYmFiMjljMDIzEgsSBxCrua_7zxsYAZIBJAoKcHJvamVjdF9pZBIWQhQxMTIyMDY1MjY1ODMyMDM4MDkwMA&filename=&opi=89354086",
+        "mimeType": "text/html"
+      },
+      "screenshot": {}
+    },
+    {
+      "id": "0438ba14592a45c9a40660caf8e24e6c",
+      "name": "projects/11220652658320380900/screens/0438ba14592a45c9a40660caf8e24e6c",
+      "title": "Vendors List",
+      "deviceType": "MOBILE",
+      "width": "806",
+      "height": "1908",
+      "htmlCode": {
+        "name": "projects/11220652658320380900/screens/0438ba14592a45c9a40660caf8e24e6c/fileEntries/html",
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1NjJkNjU4YzAxYTMwNWYxM2RhZDE3MjRiZDJmEgsSBxCrua_7zxsYAZIBJAoKcHJvamVjdF9pZBIWQhQxMTIyMDY1MjY1ODMyMDM4MDkwMA&filename=&opi=89354086",
+        "mimeType": "text/html"
+      },
+      "screenshot": {
+        "name": "projects/11220652658320380900/screens/0438ba14592a45c9a40660caf8e24e6c/fileEntries/screenshot",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/AP1WRLuLRA7Jtlp9QGI1PdyKxlVSMI_u7tSNIqWZYe7MmEMzKz95Bit3w9nlYvAtqKTuoOv-QK5sIVsrD2qCsX1lmK2-0dw5jc0x6OgPm92Tj-TDy8-AixUcS8pa8fLmIv4rVVIQPq3A_YeAzuzGtF-guDGrxGzryVsrFRx-y-r-yyVbvXJMCEfQWRDf6JbEn1meVx50uZpVsufyWsIxjbLowCJQRiZ7FxpQk6rOXkTKlmQ-Czwt6jRjOK9EP4U"
+      }
+    },
+    {
+      "id": "7f22cf6a596e44479fd397bd82590cca",
+      "name": "projects/11220652658320380900/screens/7f22cf6a596e44479fd397bd82590cca",
+      "title": "Profile & Settings",
+      "deviceType": "MOBILE",
+      "width": "806",
+      "height": "1768",
+      "htmlCode": {
+        "name": "projects/11220652658320380900/screens/7f22cf6a596e44479fd397bd82590cca/fileEntries/html",
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1NjJkNjU2NzhkNDQwMzU2ZWUyZmFhMmU2ZDM5EgsSBxCrua_7zxsYAZIBJAoKcHJvamVjdF9pZBIWQhQxMTIyMDY1MjY1ODMyMDM4MDkwMA&filename=&opi=89354086",
+        "mimeType": "text/html"
+      },
+      "screenshot": {
+        "name": "projects/11220652658320380900/screens/7f22cf6a596e44479fd397bd82590cca/fileEntries/screenshot",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/AP1WRLuyjspgPKRG7Gin0rMn1AYmG6Hgyca82w1elIy5H5-5sIbTt1caXk9ueafbVep7-iNlu_uFtYO36VDp981ymLXrPKU1xzJbjQ_R9hfnHPxZl3-0hJ5hcybHDt2trO0uCXY4M0fQjPbU-cOrQRZO2w81iwnYR2alhtcNmF9GWqxhA3Jh30Xyh-KgE2QA7D53Hhb_Bnh3ckBWBh_2J8l4lPI1_QBVRVzgwqK5HdjxcNJ0lVDnC-hRznwoVoRW"
+      }
+    },
+    {
+      "id": "8e5a87aaf86e43c4bb0c6a86eaa62090",
+      "name": "projects/11220652658320380900/screens/8e5a87aaf86e43c4bb0c6a86eaa62090",
+      "title": "Camera Capture",
+      "deviceType": "MOBILE",
+      "width": "780",
+      "height": "1768",
+      "htmlCode": {
+        "name": "projects/11220652658320380900/screens/8e5a87aaf86e43c4bb0c6a86eaa62090/fileEntries/html",
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1NjJkNjVjYTZhMDkwOTY4OGYyOGE2MjljY2JmEgsSBxCrua_7zxsYAZIBJAoKcHJvamVjdF9pZBIWQhQxMTIyMDY1MjY1ODMyMDM4MDkwMA&filename=&opi=89354086",
+        "mimeType": "text/html"
+      },
+      "screenshot": {
+        "name": "projects/11220652658320380900/screens/8e5a87aaf86e43c4bb0c6a86eaa62090/fileEntries/screenshot",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/AP1WRLuqW5lBw4d7yyRdmt3B2TCAzIkh8yHgJKMFxBtTtgs1U-ISjsdMKeBItgPt_CdemaiLU4Ojz4S7I7VSpRc8jMf2vxK_MGtz46QRjFTi-7WHNwyGNlGSFG11bIwz1668BtDxBfopxCiLNBCB_iahLqEvmLVgS0wXNoDkyNoFyVI5_OZ6WoVRvS9kdSJ_WFPXzcPjssuarQgmqxJ-HkiCGqZOOtnu4Cb6jrBHrPHfuLR6XT0PTQpx3DnhTdg"
+      }
+    },
+    {
+      "id": "c65c87f514044b16aa46e54d08f3078d",
+      "name": "projects/11220652658320380900/screens/c65c87f514044b16aa46e54d08f3078d",
+      "title": "Compliance Dashboard",
+      "deviceType": "MOBILE",
+      "width": "806",
+      "height": "2800",
+      "htmlCode": {
+        "name": "projects/11220652658320380900/screens/c65c87f514044b16aa46e54d08f3078d/fileEntries/html",
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1NjJkNjYwNTg4OGQwOTY4OGRkODBhMGZiZDgwEgsSBxCrua_7zxsYAZIBJAoKcHJvamVjdF9pZBIWQhQxMTIyMDY1MjY1ODMyMDM4MDkwMA&filename=&opi=89354086",
+        "mimeType": "text/html"
+      },
+      "screenshot": {
+        "name": "projects/11220652658320380900/screens/c65c87f514044b16aa46e54d08f3078d/fileEntries/screenshot",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/AP1WRLvElT6zEhORg-gJFoyJXiSRxl3cEOx3xXm1S9oqo66RUywb1GDJ2qorwGqP4PLABnzrQVv8ZaEqf78xt024zNXrdFB_BLMQh6KUuvvo7Dd2kG-JeAAJ4Q-cghHcEJT-QufIUFyPod28mD6bifWIP-Zv9QsIXpX-UP1eO_DwrGnlllr4WH_TXGzLCvEMkZqd-CQ5-jcYOxZrpulG4lBm_N3oMgSALFxstNj26Yb9LCeQIqbZfqIuyFxa6wdD"
+      }
+    },
+    {
+      "id": "b4e4526b51b2459385af5ac7fef726b4",
+      "name": "projects/11220652658320380900/screens/b4e4526b51b2459385af5ac7fef726b4",
+      "title": "Document Review",
+      "deviceType": "MOBILE",
+      "width": "806",
+      "height": "3636",
+      "htmlCode": {
+        "name": "projects/11220652658320380900/screens/b4e4526b51b2459385af5ac7fef726b4/fileEntries/html",
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1NjJkNjYyMzRkMjUwMzU2ZWUyZmFhMmU2ZDM5EgsSBxCrua_7zxsYAZIBJAoKcHJvamVjdF9pZBIWQhQxMTIyMDY1MjY1ODMyMDM4MDkwMA&filename=&opi=89354086",
+        "mimeType": "text/html"
+      },
+      "screenshot": {
+        "name": "projects/11220652658320380900/screens/b4e4526b51b2459385af5ac7fef726b4/fileEntries/screenshot",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/AP1WRLv4m_5jNwlwJyQ9ufhosiwECmZCJQ1lRZIdhCCigGGD7RZRp62eU-zQ3YMrwk0gSmKYAAXVvFtM_gj9f-PPgmT42lpcHjKMPF7VebqLTfxsgk-aBMUBp5-ERKvOB_3rH-DAGgf6ZNgv-0_FjxH0JGDuqLAQzdyhWGAFQ4HqsGVC3vsPt82NvVTGS8obKGvO8RHqsfoWxVVgGuCA28hXuYtLRC15RB09LByL5SFD229-DTF87zql1pbttFDl"
+      }
+    },
+    {
+      "id": "a043f42a00874512b6b28e44affd4f1a",
+      "name": "projects/11220652658320380900/screens/a043f42a00874512b6b28e44affd4f1a",
+      "title": "Login / Auth",
+      "deviceType": "MOBILE",
+      "width": "780",
+      "height": "1768",
+      "htmlCode": {
+        "name": "projects/11220652658320380900/screens/a043f42a00874512b6b28e44affd4f1a/fileEntries/html",
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1NjJkNjRlNjE1YzgwMzU2ZWUyZmFhMmU2ZDM5EgsSBxCrua_7zxsYAZIBJAoKcHJvamVjdF9pZBIWQhQxMTIyMDY1MjY1ODMyMDM4MDkwMA&filename=&opi=89354086",
+        "mimeType": "text/html"
+      },
+      "screenshot": {
+        "name": "projects/11220652658320380900/screens/a043f42a00874512b6b28e44affd4f1a/fileEntries/screenshot",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/AP1WRLtwwL77MVaCu1oVqDj0M0OAtYRWBGtJC8wr-M-YWXa1R9VV5IgD4q8WrL7KcYjKTaDMlbAiHUHYKVqdqJUVeA2-0OuGQS-bS7DgGjoLjLQVTFN2P3WVmHXs2YdPsBVQKmlZpiek-jfiI6VdzxusgM31csFobS60cVEUcfTqHxN3KLujMOIwhTdZhTzz9e9dVnvSJGpJOzefznhM7MIabLSmUJweAug-cGU4aiOsug2Oyf4N_5pgJ9_U82I"
+      }
+    },
+    {
+      "id": "7dde97ca79704f429aa8bc5620e99c7d",
+      "name": "projects/11220652658320380900/screens/7dde97ca79704f429aa8bc5620e99c7d",
+      "title": "Properties List",
+      "deviceType": "MOBILE",
+      "width": "806",
+      "height": "3788",
+      "htmlCode": {
+        "name": "projects/11220652658320380900/screens/7dde97ca79704f429aa8bc5620e99c7d/fileEntries/html",
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1NjJkNjZkM2RkYTcwMzU2ZGI2YmY5MTZlODk1EgsSBxCrua_7zxsYAZIBJAoKcHJvamVjdF9pZBIWQhQxMTIyMDY1MjY1ODMyMDM4MDkwMA&filename=&opi=89354086",
+        "mimeType": "text/html"
+      },
+      "screenshot": {
+        "name": "projects/11220652658320380900/screens/7dde97ca79704f429aa8bc5620e99c7d/fileEntries/screenshot",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/AP1WRLthzPUPrfL4dqu6PNAPVs626niA61suKEhz0m2b3P2pJ3UEeaOChfQVLbClzdTVDb6V29rSSNLUhxfd4qUDFzqRyJba40v6sfY-3SbLeqhsuhcjp0C9IIfHsq9QnPyDDXd1T0M3YD1nBezBWDntU-vf5TJxy5s-tI_OCqFhK_3YvV-Fb08sB_gjmxR8YGucaJwArmyzpz9YdyRsZ2dEBz6qgUl3QlYSX41S5oucd3a_vu6uI4CDldSFkR7f"
+      }
+    },
+    {
+      "id": "543f7d819a2b45bcb7b7ae28f202c825",
+      "name": "projects/11220652658320380900/screens/543f7d819a2b45bcb7b7ae28f202c825",
+      "title": "Notifications",
+      "deviceType": "MOBILE",
+      "width": "806",
+      "height": "1768",
+      "htmlCode": {
+        "name": "projects/11220652658320380900/screens/543f7d819a2b45bcb7b7ae28f202c825/fileEntries/html",
+        "downloadUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1NjJkNjVhODc2N2UwNGU3NGRhZjAwMzhhOWU5EgsSBxCrua_7zxsYAZIBJAoKcHJvamVjdF9pZBIWQhQxMTIyMDY1MjY1ODMyMDM4MDkwMA&filename=&opi=89354086",
+        "mimeType": "text/html"
+      },
+      "screenshot": {
+        "name": "projects/11220652658320380900/screens/543f7d819a2b45bcb7b7ae28f202c825/fileEntries/screenshot",
+        "downloadUrl": "https://lh3.googleusercontent.com/aida/AP1WRLvuHEd-zG91FtmTr4PeOSHi8zl66O_2wBvUvUWNlcfMdVEicOakJbBessjsJRfpBRTS5YvRWPqKsT8QZ3WPH3ZGfzGgJj6lLGzxPl850ZF05ZGKgKyeKbxQ-UykfT8x0taKAO7nNqMCyb4sJ1C32UAUcKkCtMGKJl6J1QMGkj-3WvK40nHuVrljcMJWqaL9n700n-CMwEoBPEABiVuMScbTkE5PnAkxvxzq9le7LsRao5OidJROX1LaKsA"
+      }
+    }
+  ]
+}

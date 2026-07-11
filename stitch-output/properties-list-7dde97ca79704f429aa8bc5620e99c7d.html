@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Properties | VendorProof</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#434652",
+                    "surface-container-high": "#282a2b",
+                    "on-surface": "#e1e3e4",
+                    "surface-container-low": "#191c1d",
+                    "surface-container": "#1d2021",
+                    "primary-container": "#2dd4bf",
+                    "on-secondary-fixed": "#171b26",
+                    "on-primary-container": "#00574d",
+                    "error-container": "#93000a",
+                    "on-primary-fixed-variant": "#005047",
+                    "surface-tint": "#3cddc7",
+                    "primary-fixed-dim": "#3cddc7",
+                    "secondary": "#c3c6d4",
+                    "tertiary-container": "#b7bed2",
+                    "surface-container-lowest": "#0c0f10",
+                    "primary-fixed": "#62fae3",
+                    "inverse-on-surface": "#2e3132",
+                    "inverse-surface": "#e1e3e4",
+                    "error": "#ffb4ab",
+                    "secondary-fixed-dim": "#c3c6d4",
+                    "tertiary-fixed": "#dce2f7",
+                    "on-secondary": "#2c303b",
+                    "on-tertiary-fixed-variant": "#404758",
+                    "on-primary": "#003731",
+                    "surface-variant": "#323536",
+                    "surface": "#111415",
+                    "outline-variant": "#3c4a46",
+                    "on-tertiary-fixed": "#141b2b",
+                    "secondary-fixed": "#dfe2f1",
+                    "on-surface-variant": "#bacac5",
+                    "inverse-primary": "#006b5f",
+                    "surface-dim": "#111415",
+                    "secondary-container": "#454955",
+                    "on-tertiary": "#293040",
+                    "tertiary": "#d3daef",
+                    "background": "#111415",
+                    "on-background": "#e1e3e4",
+                    "on-primary-fixed": "#00201c",
+                    "on-error-container": "#ffdad6",
+                    "on-error": "#690005",
+                    "surface-bright": "#373a3b",
+                    "tertiary-fixed-dim": "#c0c6db",
+                    "primary": "#57f1db",
+                    "on-tertiary-container": "#464d5e",
+                    "on-secondary-container": "#b5b8c6",
+                    "outline": "#859490",
+                    "surface-container-highest": "#323536"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "container-padding-desktop": "32px",
+                    "container-padding-mobile": "16px",
+                    "base": "8px",
+                    "stack-lg": "24px",
+                    "gutter": "16px",
+                    "stack-md": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "display": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "300"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "300"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0B0F19; /* Surface 0 from guidance */
+            color: #e1e3e4;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .property-card {
+            background-color: #111827; /* Surface 1 from guidance */
+            border: 1px solid #1F2937;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+        .property-card:hover {
+            border-color: rgba(45, 212, 191, 0.3);
+            transform: translateY(-2px);
+        }
+        .glass-nav {
+            background: rgba(29, 32, 33, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-body-md min-h-screen pb-32">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-40 bg-surface flex justify-between items-center w-full px-container-padding-mobile md:px-container-padding-desktop py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a property manager in a high-end corporate setting. The lighting is dramatic yet clean, with a dark navy background and sharp focus. The individual exudes authority and precision, perfectly aligned with a sophisticated SaaS brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc53QvorYKuiFOM9izA-bvyBDq9S7lQVIfix09d3AOaHYAUXjLVN9lQrE01QrWeXgdh6yFve5Y753PbFueK4LMGhD4bszwjgImLg3dXuuKy0I70qF_9phwevsJezkOuOPgInxo4PpB086t4xvFqsdlG_eAolIsaT7SaAxMazPp8T0ZSCpXtYT_KWir45iq7G4eFjCp8ypLW8jqvAWjiqH6tWHTW1K8dTcep4WAumIk_Vx0dVaO3dhr3w"/>
+</div>
+<span class="text-title-lg font-title-lg font-bold text-primary">VendorProof</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:opacity-80 active:scale-95 duration-100 text-primary">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</header>
+<main class="px-container-padding-mobile md:px-container-padding-desktop mt-stack-lg max-w-[1440px] mx-auto">
+<!-- Header Section -->
+<div class="mb-stack-lg flex flex-col gap-2">
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Properties</h1>
+<p class="text-on-surface-variant font-body-md text-body-md">Manage compliance across 12 active locations.</p>
+</div>
+<!-- Property Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Card 1 -->
+<div class="property-card p-6 rounded-xl flex flex-col justify-between group cursor-pointer">
+<div>
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="domain">domain</span>
+</div>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-label-sm font-label-sm flex items-center gap-1.5 border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+                            24/26 Compliant
+                        </span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-1 group-hover:text-primary transition-colors">Oakwood Manor</h3>
+<p class="text-on-surface-variant text-label-md font-label-md">1200 Forest Drive, Austin, TX 78701</p>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant flex justify-between items-center">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close-up detail of modern architectural facade featuring glass and dark steel. Minimalist corporate aesthetic with deep shadows and sharp lines, reflecting a high-stakes professional environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAy8vqrKA_KIPGqQ3UHyy7WSlqAU3Ku73lqvgCRpXgoAZkC1WxlKDs3HX9SHWlh12DGLrpQMIft2PAyoDz_vpCConqxpF8asxs1g5IpmIX86JYmqMSNr11L8XCe5DloKYQzkexMQxhhk8FdCbStaA4FtBabEIix5cUQdRvmTuPvHYrSp6IPGr3SdtrWSiDtAoJWvLk5zhAvLionQTSG2lSaspfgt_sq557PZEQZB9gobNRoU1lUpw4clg"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-surface-container bg-surface-container-highest flex items-center justify-center text-[10px] text-on-surface-variant font-bold">
+                            +4
+                        </div>
+</div>
+<span class="text-primary material-symbols-outlined">arrow_forward_ios</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="property-card p-6 rounded-xl flex flex-col justify-between group cursor-pointer">
+<div>
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="location_city">location_city</span>
+</div>
+<span class="bg-error-container/20 text-error px-3 py-1 rounded-full text-label-sm font-label-sm flex items-center gap-1.5 border border-error/20">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                            18/26 Compliant
+                        </span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-1 group-hover:text-primary transition-colors">Skyline Plaza</h3>
+<p class="text-on-surface-variant text-label-md font-label-md">450 Market Street, San Francisco, CA 94105</p>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant flex justify-between items-center">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A macro shot of a sleek digital interface showing compliance data grids. Dark mode aesthetic with teal accents and sharp typography. The atmosphere is professional, high-tech, and meticulously organized." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBr7OF5FF5J0w5YY3KrEwW2oi5LVL7H6ZTEVrSEg692UdFWfnT-Mi1RU-LqtOcYqj6DR1mtVg22LYT-HqUcU08RK3xhl0aBFThpYIQBUR-N0f0_Zxq-8xv9o4YpqGFGwmx61cbG2IVA8v-9ZRtxFiFcAPjpFdkps2Kv_etZFroEAfEALCK-aLKltNeyIuW_xJ1trOQEpXniYkN6W7ChK0AcvOFRS3bQmQiXXrgf6wsij9l4BmwehU_b0w"/>
+</div>
+</div>
+<span class="text-primary material-symbols-outlined">arrow_forward_ios</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="property-card p-6 rounded-xl flex flex-col justify-between group cursor-pointer">
+<div>
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="apartment">apartment</span>
+</div>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-label-sm font-label-sm flex items-center gap-1.5 border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            26/26 Compliant
+                        </span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-1 group-hover:text-primary transition-colors">The Mercury Lofts</h3>
+<p class="text-on-surface-variant text-label-md font-label-md">88 Arts District Blvd, Los Angeles, CA 90013</p>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant flex justify-between items-center">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Modern building interior showing an expansive lobby with polished dark stone floors and glass walls. Soft ambient light from high ceilings creates an atmosphere of wealth and security. Minimalist corporate design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD98lhrftUIg8LDskmq17F2GVJ4K5FD5gD3SYhMEcwIP4DjJqHmcSUgVxzoCSpvf-gfKTd3M_xozy6_-Z7Z2bcK60WxXlUMIhNmQ8jYCIiMl_yIh8b6tPOKbJGsOfn9AYOl13nhChrXNpUzTpeSTVEhEW-3a7RpgenXv9bQelUKYect1tIfUYy7b_xuC7L4XYjujzZLAb1svOvqvrT7MITykRVGzgMbpLVqq_s-S7K2x9nfIACya_bMsA"/>
+</div>
+</div>
+<span class="text-primary material-symbols-outlined">arrow_forward_ios</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="property-card p-6 rounded-xl flex flex-col justify-between group cursor-pointer">
+<div>
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="corporate_fare">corporate_fare</span>
+</div>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-label-sm font-label-sm flex items-center gap-1.5 border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            22/26 Compliant
+                        </span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-1 group-hover:text-primary transition-colors">River North Corporate</h3>
+<p class="text-on-surface-variant text-label-md font-label-md">321 W Chicago Ave, Chicago, IL 60654</p>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant flex justify-between items-center">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Digital art representing connectivity and data flow in a dark urban environment. Glowing teal lines trace building structures against a charcoal night sky. Sophisticated, modern, and vigilant vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM4C8ULQDJSDdX2q2f0JaU8J9PH8y-EPpgwwxhpi97CPLQMEnIouXb72tDEWvO8UIoXQpqbAHS6yfESGkN_y22WnVtQWcD7Pn3Dt0RRYYP6ulZUz8d-AGx6yyYSNEwNhCYyE7kJ9lk9kpKPp9CGIChV9bC8P2Ce49tUxhWTYKcFQNxDCN2KpF7lCjtlVHCK8s-UbgoNQVfH5mz9e7zuwx6Wf4hc18ER55fx7t-WADhHXDdRb2jvkNcMw"/>
+</div>
+</div>
+<span class="text-primary material-symbols-outlined">arrow_forward_ios</span>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="property-card p-6 rounded-xl flex flex-col justify-between group cursor-pointer">
+<div>
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="home_work">home_work</span>
+</div>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-label-sm font-label-sm flex items-center gap-1.5 border border-primary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            25/26 Compliant
+                        </span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-1 group-hover:text-primary transition-colors">Grand View Heights</h3>
+<p class="text-on-surface-variant text-label-md font-label-md">500 Hillside Ave, Seattle, WA 98101</p>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant flex justify-between items-center">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close up of a high-end metal nameplate on a dark granite wall. The nameplate is brushed steel with minimal sans-serif typography. Shadows are deep, highlighting the texture of the stone and the precision of the metal." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsiMxXu4lm3j0UXCPb9jfXvzFY8jTIS5rZ6I9sgT2h3rqGgGalQOFNCDpISy4n0bhSoB9da7-9Lp9Lm7-ku7bPxZQnVRESCYgYNDnVgRJJhPTXmPkx7hhbu0i4h_0RxweRzGswgWjBe_WNW4NvQqs1dTXLMhZWRf25kWA3C_dKLS-ydMbgDMFp3LImB_2zlmtSYIEY9tlz6sL8iFLSN518ohOiMFMaPAQueVCZmjaRF36g5r4X7uOqEA"/>
+</div>
+</div>
+<span class="text-primary material-symbols-outlined">arrow_forward_ios</span>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="property-card p-6 rounded-xl flex flex-col justify-between group cursor-pointer">
+<div>
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-lg bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="business">business</span>
+</div>
+<span class="bg-error-container/20 text-error px-3 py-1 rounded-full text-label-sm font-label-sm flex items-center gap-1.5 border border-error/20">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>
+                            12/26 Compliant
+                        </span>
+</div>
+<h3 class="text-title-lg font-title-lg text-on-surface mb-1 group-hover:text-primary transition-colors">Harbor District Hub</h3>
+<p class="text-on-surface-variant text-label-md font-label-md">12 Waterfront St, Miami, FL 33101</p>
+</div>
+<div class="mt-8 pt-4 border-t border-outline-variant flex justify-between items-center">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Modern abstract background with subtle charcoal gradients and fine grid patterns. A single vibrant teal line slices diagonally across the frame, suggesting a sense of direction and precision oversight in a SaaS environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1XV2LAaWA-AH7mSy_B5x7O7Zgtz62eUeZhBT9v2AAsBLFTk-z4kzwFLnko65pdvJR_bWVvdS3YP1Qm00zaAu5kSMpls_e3zWElMWWcJYsRzldN9YMMP0cLNmGN6loRvvQp2qV4jqpjAkSTtWhynEvOoNIc6JyPJFExpIc6JpxI0wYB0WI6k613rDp3sbNpzivkI6e81oanWv9OdkqJ_qLefddLazHE3NNH0dOWpY5nXfDkeuM7tRSmg"/>
+</div>
+</div>
+<span class="text-primary material-symbols-outlined">arrow_forward_ios</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center active:scale-90 transition-transform z-50">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full glass-nav flex justify-around items-center px-4 py-3 pb-safe border-t border-outline-variant shadow-lg z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-sm font-label-sm">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container/20 text-primary rounded-xl px-3 py-1 scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="domain" style="font-variation-settings: 'FILL' 1;">domain</span>
+<span class="text-label-sm font-label-sm">Properties</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="engineering">engineering</span>
+<span class="text-label-sm font-label-sm">Vendors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-colors relative" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-3 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+<span class="text-label-sm font-label-sm">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-label-sm font-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple scroll effect for top bar
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-md', 'bg-surface/90', 'backdrop-blur-md');
+            } else {
+                header.classList.remove('shadow-md', 'bg-surface/90', 'backdrop-blur-md');
+            }
+        });
+
+        // Hover animation for FAB
+        const fab = document.querySelector('button.fixed');
+        fab.addEventListener('mouseenter', () => {
+            fab.style.boxShadow = "0 10px 25px -5px rgba(87, 241, 219, 0.4)";
+        });
+        fab.addEventListener('mouseleave', () => {
+            fab.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1)";
+        });
+    </script>
+</body></html>

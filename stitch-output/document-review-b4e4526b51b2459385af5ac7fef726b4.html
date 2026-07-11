@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Document Review - VendorProof</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "on-secondary-fixed-variant": "#434652",
+                  "surface-container-high": "#282a2b",
+                  "on-surface": "#e1e3e4",
+                  "surface-container-low": "#191c1d",
+                  "surface-container": "#1d2021",
+                  "primary-container": "#2dd4bf",
+                  "on-secondary-fixed": "#171b26",
+                  "on-primary-container": "#00574d",
+                  "error-container": "#93000a",
+                  "on-primary-fixed-variant": "#005047",
+                  "surface-tint": "#3cddc7",
+                  "primary-fixed-dim": "#3cddc7",
+                  "secondary": "#c3c6d4",
+                  "tertiary-container": "#b7bed2",
+                  "surface-container-lowest": "#0c0f10",
+                  "primary-fixed": "#62fae3",
+                  "inverse-on-surface": "#2e3132",
+                  "inverse-surface": "#e1e3e4",
+                  "error": "#ffb4ab",
+                  "secondary-fixed-dim": "#c3c6d4",
+                  "tertiary-fixed": "#dce2f7",
+                  "on-secondary": "#2c303b",
+                  "on-tertiary-fixed-variant": "#404758",
+                  "on-primary": "#003731",
+                  "surface-variant": "#323536",
+                  "surface": "#111415",
+                  "outline-variant": "#3c4a46",
+                  "on-tertiary-fixed": "#141b2b",
+                  "secondary-fixed": "#dfe2f1",
+                  "on-surface-variant": "#bacac5",
+                  "inverse-primary": "#006b5f",
+                  "surface-dim": "#111415",
+                  "secondary-container": "#454955",
+                  "on-tertiary": "#293040",
+                  "tertiary": "#d3daef",
+                  "background": "#111415",
+                  "on-background": "#e1e3e4",
+                  "on-primary-fixed": "#00201c",
+                  "on-error-container": "#ffdad6",
+                  "on-error": "#690005",
+                  "surface-bright": "#373a3b",
+                  "tertiary-fixed-dim": "#c0c6db",
+                  "primary": "#57f1db",
+                  "on-tertiary-container": "#464d5e",
+                  "on-secondary-container": "#b5b8c6",
+                  "outline": "#859490",
+                  "surface-container-highest": "#323536"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "stack-sm": "8px",
+                  "container-padding-desktop": "32px",
+                  "container-padding-mobile": "16px",
+                  "base": "8px",
+                  "stack-lg": "24px",
+                  "gutter": "16px",
+                  "stack-md": "16px"
+          },
+          "fontFamily": {
+                  "body-md": ["Inter"],
+                  "label-sm": ["Inter"],
+                  "headline-lg-mobile": ["Inter"],
+                  "headline-lg": ["Inter"],
+                  "title-lg": ["Inter"],
+                  "display": ["Inter"],
+                  "body-lg": ["Inter"],
+                  "label-md": ["Inter"],
+                  "headline-md": ["Inter"]
+          },
+          "fontSize": {
+                  "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "300"}],
+                  "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                  "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                  "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                  "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                  "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "300"}],
+                  "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                  "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #0B0F19; /* Surface 0 */
+      color: #e1e3e4;
+      font-family: 'Inter', sans-serif;
+    }
+    .glass-card {
+      background: #111827; /* Surface 1 */
+      border: 1px solid #1F2937;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .input-field {
+      background-color: #030712;
+      border: 1px solid #3c4a46;
+    }
+    .input-field:focus {
+      border-color: #57f1db;
+      outline: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="bg-surface sticky top-0 z-50 flex justify-between items-center w-full px-container-padding-mobile md:px-container-padding-desktop py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-high ring-1 ring-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged compliance officer in a modern corporate setting. The lighting is soft and professional with a neutral dark background. The image has a high-end corporate aesthetic with clean lines and a minimalist feel, matching a dark mode UI palette of charcoals and teals." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeq48j-RjWQ7y6P45IQ06yUIKotPEZwDE37zzpf7pUK_7GSSlvQlypd5JS1EnXd4fY2vbrWHglvfaaRPDojhhaxo2B4_1zng1H1BiII4iGHkrsSqXjb07t6zwPg_yXIav54S0MMi3vDT3ovzyQg0D2FUqtXsByaNTvgWydRp7s1G-DG2W81gMy8uzE_ny-HA88oLrMhi3MAWtIcW8SLjZHGniZjhPR-hkW002XO_bSnwitpWDJfDcJMQ"/>
+</div>
+<span class="text-title-lg font-title-lg font-bold text-primary">VendorProof</span>
+</div>
+<button class="material-symbols-outlined text-primary hover:opacity-80 active:scale-95 duration-100">search</button>
+</header>
+<main class="max-w-4xl mx-auto px-container-padding-mobile md:px-container-padding-desktop mt-stack-md">
+<!-- Page Header / Context -->
+<div class="mb-stack-lg">
+<div class="flex items-center gap-2 mb-2">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">arrow_back</button>
+<span class="text-label-md font-label-md text-on-surface-variant uppercase tracking-widest">Compliance Review</span>
+</div>
+<h1 class="text-headline-md font-headline-md text-on-surface">Document Audit: COI_ABC_Electric.pdf</h1>
+</div>
+<!-- Layout Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Left Column: Document Preview (Bento pattern) -->
+<div class="md:col-span-7 flex flex-col gap-gutter">
+<div class="glass-card rounded-xl overflow-hidden relative group transition-all hover:border-primary/30">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+<span class="text-label-md font-label-md text-primary bg-primary/10 px-3 py-1 rounded-full backdrop-blur-md">View Fullscreen</span>
+</div>
+<div class="aspect-[4/5] w-full bg-surface-container-low flex items-center justify-center p-6">
+<img class="shadow-2xl rounded-sm w-full h-full object-contain" data-alt="A high-fidelity digital rendering of a formal Certificate of Liability Insurance document. The document is displayed on a dark sleek background with professional lighting highlighting the text sections 'Insured', 'Coverage', and 'Limits'. The overall mood is official and high-stakes corporate compliance with a minimalist dark-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJB58tybSsE2xLH3LRbxyv1A9HxWEhltPdlzVEwEVk5J8iXe8K6tpVBgCVB4nmdq6tlbejBHqLSCaLR5RTSZP_9tRhj4i7fzGtTWRTB3nqcg1K3_9h_ubR7G3jDD3N5zAy-xNhxcVR9LB986bc88zCw6THFP8RVP9Yd8PXR-sG4Q1VSmIFDn5q5hHo9STZsAVjrx0elk-k4yVzRCUANt5SKIIJ5LuK0225rt9BRBGZEwEh2jv3mNKorw"/>
+</div>
+</div>
+<!-- Internal Note Area -->
+<div class="glass-card rounded-xl p-stack-md">
+<label class="text-label-md font-label-md text-on-surface-variant mb-2 block" for="notes">Internal Audit Notes</label>
+<textarea class="input-field w-full h-32 rounded-lg p-3 text-body-md font-body-md text-on-surface focus:ring-1 focus:ring-primary transition-all resize-none" id="notes" placeholder="Add observations for the team..."></textarea>
+<div class="flex justify-between items-center mt-3">
+<span class="text-label-sm font-label-sm text-on-surface-variant italic">Only visible to administrators</span>
+<button class="text-primary text-label-md font-label-md hover:underline">Clear Notes</button>
+</div>
+</div>
+</div>
+<!-- Right Column: Verification Fields -->
+<div class="md:col-span-5 flex flex-col gap-gutter">
+<div class="glass-card rounded-xl p-stack-md flex flex-col gap-stack-md">
+<div class="flex items-center justify-between">
+<h2 class="text-title-lg font-title-lg text-on-surface">Verification</h2>
+<div class="flex items-center gap-1.5 bg-primary/10 px-2 py-1 rounded-full">
+<span class="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></span>
+<span class="text-label-sm font-label-sm text-primary">AI-extracted, please confirm</span>
+</div>
+</div>
+<!-- Fields -->
+<div class="space-y-stack-md">
+<div>
+<label class="text-label-md font-label-md text-on-surface-variant mb-1.5 block">Document Type</label>
+<div class="input-field rounded-lg px-4 py-3 text-body-md font-body-md text-on-surface flex justify-between items-center group cursor-pointer hover:border-primary/50 transition-colors">
+<span>COI</span>
+<span class="material-symbols-outlined text-primary text-sm">verified</span>
+</div>
+</div>
+<div>
+<label class="text-label-md font-label-md text-on-surface-variant mb-1.5 block">Insured Entity</label>
+<div class="input-field rounded-lg px-4 py-3 text-body-md font-body-md text-on-surface flex justify-between items-center group cursor-pointer hover:border-primary/50 transition-colors">
+<span>ABC Electric</span>
+<span class="material-symbols-outlined text-primary text-sm">verified</span>
+</div>
+</div>
+<div>
+<label class="text-label-md font-label-md text-on-surface-variant mb-1.5 block">Policy Number</label>
+<div class="input-field rounded-lg px-4 py-3 text-body-md font-body-md text-on-surface flex justify-between items-center group cursor-pointer hover:border-primary/50 transition-colors">
+<span>8829-X</span>
+<span class="material-symbols-outlined text-primary text-sm">verified</span>
+</div>
+</div>
+<div>
+<label class="text-label-md font-label-md text-on-surface-variant mb-1.5 block">Expiration Date</label>
+<div class="input-field rounded-lg px-4 py-3 text-body-md font-body-md text-on-surface flex justify-between items-center group cursor-pointer hover:border-primary/50 transition-colors">
+<span>12/12/2024</span>
+<span class="material-symbols-outlined text-primary text-sm">calendar_today</span>
+</div>
+<p class="text-[10px] mt-1 text-primary/60 font-medium px-1">Confidence Score: 98.4%</p>
+</div>
+</div>
+<!-- Action Cluster -->
+<div class="mt-stack-lg flex flex-col gap-3">
+<button class="w-full h-12 bg-primary hover:bg-primary-container text-on-primary font-bold rounded-lg transition-all active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">check_circle</span>
+              Approve Document
+            </button>
+<button class="w-full h-12 border border-error/50 hover:border-error text-error font-medium rounded-lg transition-all active:scale-95 flex items-center justify-center gap-2 bg-error/5">
+<span class="material-symbols-outlined">assignment_return</span>
+              Request Resubmission
+            </button>
+<p class="text-label-sm font-label-sm text-on-surface-variant text-center mt-2">
+              Review history: Last audited by Auto-Bot 2m ago.
+            </p>
+</div>
+</div>
+<!-- Compliance Checklist -->
+<div class="glass-card rounded-xl p-stack-md">
+<h3 class="text-label-md font-label-md text-on-surface mb-4 uppercase tracking-wider">Risk Assessment</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-3 opacity-60">
+<span class="material-symbols-outlined text-primary">check</span>
+<span class="text-label-md font-label-md">Limit matches contract (Min $1M)</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">check</span>
+<span class="text-label-md font-label-md">Carrier Rating: A- or better</span>
+</div>
+<div class="flex items-center gap-3 text-error">
+<span class="material-symbols-outlined">warning</span>
+<span class="text-label-md font-label-md">Waiver of Subrogation missing</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe bg-surface-container/80 backdrop-blur-xl border-t border-outline-variant shadow-lg z-50 md:hidden">
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-sm font-label-sm">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1">
+<span class="material-symbols-outlined">domain</span>
+<span class="text-label-sm font-label-sm">Properties</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container/20 text-primary rounded-xl px-3 py-1">
+<span class="material-symbols-outlined">engineering</span>
+<span class="text-label-sm font-label-sm">Vendors</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1">
+<span class="material-symbols-outlined">notifications</span>
+<span class="text-label-sm font-label-sm">Alerts</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1">
+<span class="material-symbols-outlined">person</span>
+<span class="text-label-sm font-label-sm">Profile</span>
+</div>
+</nav>
+<script>
+    // Simple micro-interaction for input fields
+    document.querySelectorAll('.input-field').forEach(field => {
+      field.addEventListener('click', () => {
+        field.classList.add('scale-[0.98]');
+        setTimeout(() => field.classList.remove('scale-[0.98]'), 100);
+      });
+    });
+
+    // Hover effect for the document preview
+    const docPreview = document.querySelector('.glass-card');
+    if (docPreview) {
+      docPreview.addEventListener('mousemove', (e) => {
+        const rect = docPreview.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        docPreview.style.setProperty('--mouse-x', `${x}px`);
+        docPreview.style.setProperty('--mouse-y', `${y}px`);
+      });
+    }
+  </script>
+</body></html>

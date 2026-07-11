@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Profile - Skyline Properties</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#434652",
+                    "surface-container-high": "#282a2b",
+                    "on-surface": "#e1e3e4",
+                    "surface-container-low": "#191c1d",
+                    "surface-container": "#1d2021",
+                    "primary-container": "#2dd4bf",
+                    "on-secondary-fixed": "#171b26",
+                    "on-primary-container": "#00574d",
+                    "error-container": "#93000a",
+                    "on-primary-fixed-variant": "#005047",
+                    "surface-tint": "#3cddc7",
+                    "primary-fixed-dim": "#3cddc7",
+                    "secondary": "#c3c6d4",
+                    "tertiary-container": "#b7bed2",
+                    "surface-container-lowest": "#0c0f10",
+                    "primary-fixed": "#62fae3",
+                    "inverse-on-surface": "#2e3132",
+                    "inverse-surface": "#e1e3e4",
+                    "error": "#ffb4ab",
+                    "secondary-fixed-dim": "#c3c6d4",
+                    "tertiary-fixed": "#dce2f7",
+                    "on-secondary": "#2c303b",
+                    "on-tertiary-fixed-variant": "#404758",
+                    "on-primary": "#003731",
+                    "surface-variant": "#323536",
+                    "surface": "#111415",
+                    "outline-variant": "#3c4a46",
+                    "on-tertiary-fixed": "#141b2b",
+                    "secondary-fixed": "#dfe2f1",
+                    "on-surface-variant": "#bacac5",
+                    "inverse-primary": "#006b5f",
+                    "surface-dim": "#111415",
+                    "secondary-container": "#454955",
+                    "on-tertiary": "#293040",
+                    "tertiary": "#d3daef",
+                    "background": "#111415",
+                    "on-background": "#e1e3e4",
+                    "on-primary-fixed": "#00201c",
+                    "on-error-container": "#ffdad6",
+                    "on-error": "#690005",
+                    "surface-bright": "#373a3b",
+                    "tertiary-fixed-dim": "#c0c6db",
+                    "primary": "#57f1db",
+                    "on-tertiary-container": "#464d5e",
+                    "on-secondary-container": "#b5b8c6",
+                    "outline": "#859490",
+                    "surface-container-highest": "#323536"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "container-padding-desktop": "32px",
+                    "container-padding-mobile": "16px",
+                    "base": "8px",
+                    "stack-lg": "24px",
+                    "gutter": "16px",
+                    "stack-md": "16px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "display": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "300"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "300"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0B0F19;
+            color: #e1e3e4;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-card {
+            background: #111827;
+            border: 1px solid #1F2937;
+            transition: border-color 0.2s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(45, 212, 191, 0.3);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .toggle-checkbox:checked + .toggle-slot {
+            background-color: #2dd4bf;
+        }
+        .toggle-checkbox:checked + .toggle-slot .toggle-dot {
+            transform: translateX(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen pb-24">
+<!-- Top App Bar -->
+<header class="bg-surface sticky top-0 z-40 flex justify-between items-center w-full px-4 md:px-8 py-4">
+<div class="flex items-center gap-3">
+<span class="text-primary font-title-lg font-bold">VendorProof</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-primary">search</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional high-resolution corporate headshot of a property executive with a friendly yet authoritative expression. The background is a blurred high-end office interior with subtle teal and navy lighting, matching the modern corporate aesthetic of the VendorProof platform. Sharp focus on facial details, cinematic lighting, and a minimalist color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpBG8hm_7pamQkjJXIFb7pPgmK9_z_6E8NjUuE7alyym2drHrKoZJ7Px6Zzq5i7tOIyBY-OiA5IvlDdmICFBu4rcebsr4cy3MiVuz6rRHQXzBFJpa4oCi5yYtULHc0trhE7xEIlHH4k_TiebggWvNAWbjkFP7RfHmKZoMgSLRz76O6-S92n029di5BEnywa8jbS16eiBLthdX50QK_Rr8Cvc9dT1v_fp_iqW9INIHdOqcF5XdmbWQjug"/>
+</div>
+</div>
+</header>
+<main class="max-w-3xl mx-auto px-4 pt-8 animate-in fade-in duration-700">
+<!-- Profile Header -->
+<section class="flex flex-col items-center mb-10">
+<div class="relative group">
+<div class="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-surface-container mb-4 shadow-2xl relative">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a mid-40s corporate professional in a dark navy suit, looking directly at the camera with a confident smile. The environment is a sleek, glass-walled office with soft morning light filtering through, creating a calm and dependable atmosphere. The lighting uses soft blue and teal highlights on the skin to unify with the dark UI theme." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX5uqqKjVZ5II1V8DNFGYhSuaea5RzQCzna3pPaYXYVlwqlZs-4WElRuXh_FXEeUtXis_X1SK-3KCF7aCf7KUM1_42pRirXiaqEPd-GW-RlZ9D6VFS1Jbs0rvUWKjyyMo4y1BLRuqoqcAtTK0vS2sDP95kE-z-DDot3fnbH8meV-H0cP6sEw-Z1H_wxQLjhfAQj9iHQ5yUWnsLaZNHarAdF-RUQukImmZjAY_CG0LPjvpHHFlgR2FyJA"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+<span class="material-symbols-outlined text-white">edit</span>
+</div>
+</div>
+<div class="absolute bottom-6 right-0 bg-primary p-1.5 rounded-full border-4 border-background">
+<span class="material-symbols-outlined text-on-primary text-[16px] block">verified</span>
+</div>
+</div>
+<h1 class="font-headline-md text-headline-md text-on-surface">Alex Thompson</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Director of Operations • Skyline Properties</p>
+</section>
+<!-- Settings Groups -->
+<div class="space-y-4">
+<!-- Team Section -->
+<div class="glass-card rounded-xl overflow-hidden">
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container transition-colors group active:scale-[0.98] duration-100">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">group</span>
+</div>
+<div class="text-left">
+<span class="block font-label-md text-label-md text-on-surface">Team Members</span>
+<span class="block text-xs text-on-surface-variant">Manage 12 active users</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
+</button>
+</div>
+<!-- Notifications Section -->
+<div class="glass-card rounded-xl p-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-secondary-container/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">notifications</span>
+</div>
+<div>
+<span class="block font-label-md text-label-md text-on-surface">Notification Preferences</span>
+<span class="block text-xs text-on-surface-variant">Real-time compliance alerts</span>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only toggle-checkbox" type="checkbox"/>
+<div class="toggle-slot w-11 h-6 bg-surface-container-highest rounded-full transition-colors duration-200">
+<div class="toggle-dot absolute top-[2px] left-[2px] bg-white w-5 h-5 rounded-full shadow-md transition-transform duration-200"></div>
+</div>
+</label>
+</div>
+</div>
+<!-- Company Section -->
+<div class="glass-card rounded-xl overflow-hidden">
+<button class="w-full flex items-center justify-between p-4 hover:bg-surface-container transition-colors group active:scale-[0.98] duration-100">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-tertiary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary">business</span>
+</div>
+<div class="text-left">
+<span class="block font-label-md text-label-md text-on-surface">Company Info</span>
+<span class="block text-xs text-on-surface-variant">Skyline Properties HQ</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">chevron_right</span>
+</button>
+</div>
+<!-- Sign Out -->
+<div class="pt-8">
+<button class="w-full flex items-center justify-center gap-2 p-4 rounded-xl border border-error/30 text-error hover:bg-error/5 transition-all active:scale-[0.98] duration-100">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Sign Out</span>
+</button>
+</div>
+</div>
+<!-- App Branding / Footer -->
+<footer class="mt-12 text-center pb-8">
+<p class="font-label-sm text-label-sm text-on-surface-variant/40">Version 2.4.1 (Build 8902)</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant/40">© 2024 Skyline Properties Portfolio</p>
+</footer>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 pb-safe bg-surface-container/80 backdrop-blur-xl border-t border-outline-variant z-50 shadow-lg">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-label-sm font-label-sm mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="text-label-sm font-label-sm mt-1">Properties</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="text-label-sm font-label-sm mt-1">Vendors</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-1 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="text-label-sm font-label-sm mt-1">Alerts</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container/20 text-primary rounded-xl px-3 py-1 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-label-sm font-label-sm mt-1">Profile</span>
+</a>
+</nav>
+<script>
+        // Simple micro-interaction for toggle
+        document.querySelector('.toggle-checkbox').addEventListener('change', function(e) {
+            console.log('Push notifications ' + (e.target.checked ? 'enabled' : 'disabled'));
+        });
+
+        // Add active states to buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.classList.add('scale-95');
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.classList.remove('scale-95');
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.classList.remove('scale-95');
+            });
+        });
+    </script>
+</body></html>
