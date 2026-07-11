@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 13.0.0"
+    "version": ">= 13.0.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -13,6 +14,8 @@
         "buildType": "apk"
       },
       "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://rvmttyjiywmkphzaucrs.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_WB9IYh0OE9w_pkvPAhLEgQ_n34jnrl0",
         "EXPO_PUBLIC_VENDORPROOF_API_URL": "http://192.168.3.100:3000"
       }
     },
