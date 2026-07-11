@@ -1,0 +1,21 @@
+E:\Vendorproof App\node_modules\@expo\cli\build\src\utils\errors.js:130
+    throw error;
+    ^
+
+Error: ENOENT: no such file or directory, watch 'E:\Vendorproof App\node_modules\.react-native-gesture-handler-Ox4FXFzA\android\svg\src\main\java\com'
+    at FSWatcher.<computed> (node:internal/fs/watchers:247:19)
+    at Object.watch (node:fs:2532:36)
+    at #watchdir (E:\Vendorproof App\node_modules\@expo\metro-file-map\build\watchers\FallbackWatcher.js:164:38)
+    at E:\Vendorproof App\node_modules\@expo\metro-file-map\build\watchers\FallbackWatcher.js:268:39
+    at Walker.<anonymous> (E:\Vendorproof App\node_modules\@expo\metro-file-map\build\watchers\FallbackWatcher.js:410:33)
+    at Walker.emit (node:events:507:28)
+    at E:\Vendorproof App\node_modules\walker\lib\walker.js:69:16
+    at FSReqCallback.oncomplete (node:fs:178:23) {
+  errno: -4058,
+  syscall: 'watch',
+  code: 'ENOENT',
+  path: 'E:\\Vendorproof App\\node_modules\\.react-native-gesture-handler-Ox4FXFzA\\android\\svg\\src\\main\\java\\com',
+  filename: 'E:\\Vendorproof App\\node_modules\\.react-native-gesture-handler-Ox4FXFzA\\android\\svg\\src\\main\\java\\com'
+}
+
+Node.js v24.2.0

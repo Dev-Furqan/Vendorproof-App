@@ -6,9 +6,6 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
-    "splash": {
-      "backgroundColor": "#05070d"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -23,7 +20,6 @@
     },
     "android": {
       "package": "com.vendorproof.mobile",
-      "usesCleartextTraffic": true,
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.READ_MEDIA_IMAGES",
