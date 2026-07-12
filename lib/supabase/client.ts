@@ -24,4 +24,4 @@ export const supabase = createClient(supabaseUrl ?? "", supabaseAnonKey ?? "", {
   }
 });
 
-export const realtimeTables = ["documents", "vendor_requirements", "communications"] as const;
+export const realtimeTables = ["properties", "vendors", "vendor_requirements", "documents", "document_versions", "document_reviews", "communications"] as const;

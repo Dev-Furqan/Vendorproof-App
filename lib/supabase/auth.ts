@@ -95,6 +95,12 @@ export function isAuthCallbackUrl(url: string | null) {
   return /[?#&](code|access_token|error)=/.test(url);
 }
 
+export function isPasswordRecoveryUrl(url: string | null) {
+  if (!url || !isAuthCallbackUrl(url)) return false;
+  const params = getAuthParams(url);
+  return params.get("type") === "recovery";
+}
+
 function getAuthParams(url: string) {
   const parsedUrl = new URL(url);
   const params = new URLSearchParams(parsedUrl.search);

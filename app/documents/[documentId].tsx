@@ -1,29 +1,122 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Image, StyleSheet, TextInput, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Text } from "@/components/ui/Text";
-import { useComplianceData } from "@/lib/compliance/data";
+import { getCurrentWorkspace, useComplianceData } from "@/lib/compliance/data";
+import { createDocumentSignedUrl } from "@/lib/documents/mobile-documents";
+import { supabase } from "@/lib/supabase/client";
 import { colors } from "@/lib/theme";
 
 export default function DocumentReviewScreen() {
   const { documentId } = useLocalSearchParams<{ documentId: string }>();
-  const { data, loading, error } = useComplianceData();
-  const document = data.requirements.map((requirement) => requirement.document).find((item) => item?.id === documentId) ?? null;
-  const fields = document
-    ? [
-        ["Document Type", document.document_type],
-        ["Business Name", document.business_name ?? document.ai_extracted_business_name],
-        ["Policy Number", document.policy_number ?? document.ai_extracted_policy_number],
-        ["Effective Date", document.issued_at ?? document.ai_extracted_effective_date],
-        ["Expiration Date", document.expires_at ?? document.ai_extracted_expiration_date],
-        ["Carrier", document.issuing_authority ?? document.ai_extracted_issuing_authority]
-      ]
-    : [];
+  const { data, loading, error, reload } = useComplianceData();
+  const requirement = data.requirements.find((item) => item.document?.id === documentId) ?? null;
+  const document = requirement?.document ?? null;
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [fields, setFields] = useState({
+    documentType: "",
+    businessName: "",
+    policyNumber: "",
+    effectiveDate: "",
+    expirationDate: "",
+    carrier: ""
+  });
+
+  useEffect(() => {
+    if (!document) return;
+    setFields({
+      documentType: document.document_type ?? document.ai_extracted_document_type ?? "",
+      businessName: document.business_name ?? document.ai_extracted_business_name ?? "",
+      policyNumber: document.policy_number ?? document.ai_extracted_policy_number ?? "",
+      effectiveDate: document.issued_at ?? document.ai_extracted_effective_date ?? "",
+      expirationDate: document.expires_at ?? document.ai_extracted_expiration_date ?? "",
+      carrier: document.issuing_authority ?? document.ai_extracted_issuing_authority ?? ""
+    });
+  }, [document]);
+
+  useEffect(() => {
+    let mounted = true;
+    if (!document?.latestVersion?.storage_path) {
+      setPreviewUrl(null);
+      return;
+    }
+
+    createDocumentSignedUrl(document.latestVersion.storage_path).then((url) => {
+      if (mounted) setPreviewUrl(url);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [document?.latestVersion?.storage_path]);
+
+  async function saveReview(status: "approved" | "rejected") {
+    if (!document || !requirement) return;
+    setSaving(true);
+    setActionError(null);
+
+    try {
+      const { user, organization } = await getCurrentWorkspace();
+      if (!user || !organization) throw new Error("Sign in again before reviewing documents.");
+      const reviewedAt = new Date().toISOString();
+
+      const documentUpdate = await supabase
+        .from("documents")
+        .update({
+          document_type: fields.documentType.trim() || document.document_type,
+          status,
+          business_name: fields.businessName.trim() || null,
+          policy_number: fields.policyNumber.trim() || null,
+          issuing_authority: fields.carrier.trim() || null,
+          issued_at: normalizeDate(fields.effectiveDate),
+          expires_at: normalizeDate(fields.expirationDate),
+          ai_extraction_confirmed_at: status === "approved" ? reviewedAt : null,
+          ai_extraction_confirmed_by: status === "approved" ? user.id : null,
+          ai_extraction_corrected_fields: fields,
+          updated_at: reviewedAt
+        })
+        .eq("id", document.id);
+
+      if (documentUpdate.error) throw new Error(documentUpdate.error.message);
+
+      const requirementUpdate = await supabase
+        .from("vendor_requirements")
+        .update({
+          status: status === "approved" ? "compliant" : "missing",
+          expires_at: status === "approved" ? normalizeDate(fields.expirationDate) : requirement.expires_at,
+          updated_at: reviewedAt
+        })
+        .eq("id", requirement.id);
+
+      if (requirementUpdate.error) throw new Error(requirementUpdate.error.message);
+
+      const reviewInsert = await supabase.from("document_reviews").insert({
+        organization_id: organization.id,
+        document_id: document.id,
+        document_version_id: document.latestVersion?.id ?? null,
+        reviewer_id: user.id,
+        status,
+        notes: status === "approved" ? "Approved from VendorProof Mobile." : "Resubmission requested from VendorProof Mobile.",
+        reviewed_at: reviewedAt
+      });
+
+      if (reviewInsert.error) throw new Error(reviewInsert.error.message);
+
+      await reload(true);
+    } catch (reviewError) {
+      setActionError(reviewError instanceof Error ? reviewError.message : "Could not save review.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <Screen>
@@ -53,23 +146,33 @@ export default function DocumentReviewScreen() {
         ) : null}
 
         <Card className="bg-surface-muted" style={styles.preview}>
-          <MaterialCommunityIcons name="file-document-outline" size={42} color={colors.accent} />
-          <Text variant="title">Document Preview</Text>
-          <Text variant="muted">{document?.latestVersion?.file_name ?? "No document file loaded"}</Text>
+          {previewUrl ? (
+            <Image source={{ uri: previewUrl }} style={styles.previewImage} resizeMode="contain" />
+          ) : (
+            <>
+              <MaterialCommunityIcons name="file-document-outline" size={42} color={colors.accent} />
+              <Text variant="title">Document Preview</Text>
+              <Text variant="muted">{document?.latestVersion?.file_name ?? "No document file loaded"}</Text>
+            </>
+          )}
         </Card>
 
         {document ? (
           <Card>
           <View style={styles.cardHeader}>
-            <Text variant="title">AI Extracted Data</Text>
+            <View>
+              <Text variant="title">AI Extracted Data</Text>
+              <Text variant="muted">AI-extracted, please confirm</Text>
+            </View>
             <StatusBadge status={document.status === "approved" ? "compliant" : "under_review"} />
           </View>
-          {fields.map(([label, value]) => (
-            <View key={label} style={styles.fieldBox}>
-              <Text variant="label">{label}</Text>
-              <Text>{value ?? "Not captured"}</Text>
-            </View>
-          ))}
+          <FieldInput label="Document Type" value={fields.documentType} onChangeText={(documentType) => setFields((current) => ({ ...current, documentType }))} />
+          <FieldInput label="Insured / Business Name" value={fields.businessName} onChangeText={(businessName) => setFields((current) => ({ ...current, businessName }))} />
+          <FieldInput label="Policy / License Number" value={fields.policyNumber} onChangeText={(policyNumber) => setFields((current) => ({ ...current, policyNumber }))} />
+          <FieldInput label="Effective Date" value={fields.effectiveDate} onChangeText={(effectiveDate) => setFields((current) => ({ ...current, effectiveDate }))} />
+          <FieldInput label="Expiration Date" value={fields.expirationDate} onChangeText={(expirationDate) => setFields((current) => ({ ...current, expirationDate }))} />
+          <FieldInput label="Carrier / Authority" value={fields.carrier} onChangeText={(carrier) => setFields((current) => ({ ...current, carrier }))} />
+          {document.ai_extraction_error ? <Text className="text-expiring">AI extraction note: {document.ai_extraction_error}</Text> : null}
           </Card>
         ) : null}
 
@@ -87,13 +190,46 @@ export default function DocumentReviewScreen() {
 
         {document ? (
           <View style={styles.actions}>
-          <Button>Approve Document</Button>
-          <Button variant="danger">Request Resubmission</Button>
+          {actionError ? (
+            <View style={styles.errorBox}>
+              <Text className="text-missing">{actionError}</Text>
+            </View>
+          ) : null}
+          <Button disabled={saving} onPress={() => saveReview("approved")}>
+            {saving ? "Saving..." : "Approve Document"}
+          </Button>
+          <Button disabled={saving} variant="danger" onPress={() => saveReview("rejected")}>
+            Request Resubmission
+          </Button>
           </View>
         ) : null}
+        {loading ? <ActivityIndicator color={colors.accent} /> : null}
       </View>
     </Screen>
   );
+}
+
+function FieldInput({ label, value, onChangeText }: { label: string; value: string; onChangeText: (value: string) => void }) {
+  return (
+    <View style={styles.fieldBox}>
+      <Text variant="label">{label}</Text>
+      <TextInput
+        placeholder="Not captured"
+        placeholderTextColor={colors.muted}
+        style={styles.input}
+        value={value}
+        onChangeText={onChangeText}
+      />
+    </View>
+  );
+}
+
+function normalizeDate(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const parsed = new Date(trimmed);
+  if (Number.isNaN(parsed.getTime())) return trimmed;
+  return parsed.toISOString().slice(0, 10);
 }
 
 const styles = StyleSheet.create({
@@ -113,6 +249,11 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     backgroundColor: colors.surface
   },
+  previewImage: {
+    width: "100%",
+    height: 300,
+    borderRadius: 8
+  },
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -127,6 +268,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.input,
     padding: 12
   },
+  input: {
+    minHeight: 40,
+    color: colors.foreground,
+    fontSize: 16,
+    padding: 0
+  },
   checkRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -140,5 +287,12 @@ const styles = StyleSheet.create({
   },
   actions: {
     gap: 12
+  },
+  errorBox: {
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "rgba(253, 164, 175, 0.3)",
+    backgroundColor: "rgba(253, 164, 175, 0.08)",
+    padding: 12
   }
 });

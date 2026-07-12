@@ -4,7 +4,7 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
-import { completeAuthFromUrl, oauthRedirectTo } from "@/lib/supabase/auth";
+import { completeAuthFromUrl, isPasswordRecoveryUrl, oauthRedirectTo } from "@/lib/supabase/auth";
 import { colors } from "@/lib/theme";
 
 export default function AuthCallbackScreen() {
@@ -21,9 +21,12 @@ export default function AuthCallbackScreen() {
       if (typeof value === "string") query.set(key, value);
     });
 
-    completeAuthFromUrl(`${oauthRedirectTo}?${query.toString()}`)
+    const callbackUrl = `${oauthRedirectTo}?${query.toString()}`;
+    const isRecovery = isPasswordRecoveryUrl(callbackUrl);
+
+    completeAuthFromUrl(callbackUrl)
       .then((completed) => {
-        router.replace(completed ? "/(tabs)" : "/(auth)/login");
+        router.replace((completed ? (isRecovery ? "/(auth)/reset-password" : "/(tabs)") : "/(auth)/login") as never);
       })
       .catch((callbackError) => {
         setError(callbackError instanceof Error ? callbackError.message : "Could not finish sign in.");

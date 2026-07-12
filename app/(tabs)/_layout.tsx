@@ -1,7 +1,8 @@
 import { Tabs } from "expo-router";
 import { router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 import { ensureMobileWorkspace } from "@/lib/auth/workspace";
 import { supabase } from "@/lib/supabase/client";
@@ -16,7 +17,10 @@ const iconMap = {
 } as const;
 
 export default function TabsLayout() {
+  const [checkingSession, setCheckingSession] = useState(true);
+
   useEffect(() => {
+    let mounted = true;
     supabase.auth
       .getSession()
       .then(async ({ data }) => {
@@ -25,9 +29,31 @@ export default function TabsLayout() {
           return;
         }
         await ensureMobileWorkspace(data.session.user);
+        if (mounted) setCheckingSession(false);
       })
       .catch(() => router.replace("/(auth)/login"));
+
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT" || !session?.user) {
+        router.replace("/(auth)/login");
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
+
+  if (checkingSession) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator color={colors.accent} />
+      </View>
+    );
+  }
 
   return (
     <Tabs
@@ -59,3 +85,12 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.background
+  }
+});

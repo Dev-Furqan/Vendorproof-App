@@ -30,7 +30,7 @@ export default function LoginScreen() {
   const [authError, setAuthError] = useState<string | null>(null);
   const [authMessage, setAuthMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const { control, handleSubmit } = useForm<AuthForm>({
+  const { control, handleSubmit, getValues } = useForm<AuthForm>({
     resolver: zodResolver(authSchema),
     defaultValues: { fullName: "", email: "", password: "" }
   });
@@ -51,7 +51,7 @@ export default function LoginScreen() {
     });
     setSubmitting(false);
     if (error) {
-      setAuthError(error.message);
+      setAuthError(toFriendlyAuthError(error.message));
       return;
     }
     try {
@@ -84,7 +84,7 @@ export default function LoginScreen() {
     setSubmitting(false);
 
     if (error) {
-      setAuthError(error.message);
+      setAuthError(toFriendlyAuthError(error.message));
       return;
     }
 
@@ -114,6 +114,30 @@ export default function LoginScreen() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function sendPasswordReset() {
+    const email = getValues("email").trim().toLowerCase();
+    setAuthError(null);
+    setAuthMessage(null);
+
+    if (!z.string().email().safeParse(email).success) {
+      setAuthError("Enter your email address first, then tap Forgot Password.");
+      return;
+    }
+
+    setSubmitting(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: oauthRedirectTo
+    });
+    setSubmitting(false);
+
+    if (error) {
+      setAuthError(toFriendlyAuthError(error.message));
+      return;
+    }
+
+    setAuthMessage("Password reset sent. Open the link on this phone to choose a new password.");
   }
 
   const isSignup = mode === "signup";
@@ -184,9 +208,11 @@ export default function LoginScreen() {
         <View style={styles.field}>
           <View style={styles.passwordHeader}>
             <Text variant="label">Password</Text>
-            <Text variant="label" className="text-accent">
-              Forgot Password?
-            </Text>
+            <Pressable onPress={sendPasswordReset} disabled={submitting}>
+              <Text variant="label" className="text-accent">
+                Forgot Password?
+              </Text>
+            </Pressable>
           </View>
           <Controller
             control={control}
@@ -239,6 +265,14 @@ export default function LoginScreen() {
       </Pressable>
     </Screen>
   );
+}
+
+function toFriendlyAuthError(message: string) {
+  if (/invalid login credentials/i.test(message)) return "The email or password is incorrect. Check both fields and try again.";
+  if (/email not confirmed/i.test(message)) return "Confirm your email address before signing in.";
+  if (/user not found|not registered/i.test(message)) return "No VendorProof account was found for that email address.";
+  if (/network|fetch|failed to fetch/i.test(message)) return "Network connection failed. Check your connection and try again.";
+  return message || "Authentication failed. Try again in a moment.";
 }
 
 const styles = StyleSheet.create({

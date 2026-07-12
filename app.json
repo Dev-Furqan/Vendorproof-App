@@ -6,29 +6,40 @@
     "version": "0.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#05070d"
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.vendorproof.mobile",
+      "buildNumber": "1",
       "infoPlist": {
-        "NSCameraUsageDescription": "VendorProof uses the camera to capture compliance documents for internal review.",
-        "NSPhotoLibraryUsageDescription": "VendorProof lets you select existing document photos for upload.",
-        "NSUserNotificationsUsageDescription": "VendorProof sends compliance reminders and document review alerts."
+        "NSCameraUsageDescription": "VendorProof uses the camera to scan insurance, license, and tax documents for compliance review.",
+        "NSPhotoLibraryUsageDescription": "VendorProof lets you choose existing document photos to upload to your compliance workspace.",
+        "NSUserNotificationsUsageDescription": "VendorProof sends compliance reminders, expiration alerts, and document review updates."
       }
     },
     "android": {
       "package": "com.vendorproof.mobile",
+      "versionCode": 1,
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.READ_MEDIA_IMAGES",
-        "android.permission.POST_NOTIFICATIONS",
-        "android.permission.RECORD_AUDIO"
+        "android.permission.POST_NOTIFICATIONS"
       ],
       "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#05070d"
       }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router",
@@ -36,13 +47,13 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "VendorProof uses the camera to capture compliance documents for internal review."
+          "cameraPermission": "VendorProof uses the camera to scan insurance, license, and tax documents for compliance review."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "VendorProof lets you select existing document photos for upload."
+          "photosPermission": "VendorProof lets you choose existing document photos to upload to your compliance workspace."
         }
       ],
       [

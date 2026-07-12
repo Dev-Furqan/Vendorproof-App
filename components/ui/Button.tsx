@@ -28,6 +28,7 @@ export function Button({ children, variant = "primary", className = "", style, .
 
   return (
     <Pressable
+      accessibilityRole="button"
       className={className}
       style={({ pressed }) => [
         buttonStyles.button,
@@ -37,6 +38,7 @@ export function Button({ children, variant = "primary", className = "", style, .
         className.includes("px-0") ? buttonStyles.noPadX : null,
         className.includes("items-start") ? buttonStyles.alignStart : null,
         className.includes("h-14") ? buttonStyles.iconButton : null,
+        props.disabled ? buttonStyles.disabled : null,
         pressed && buttonStyles.pressed,
         style as ViewStyle
       ]}
@@ -80,5 +82,8 @@ const buttonStyles = StyleSheet.create({
   pressed: {
     opacity: 0.82,
     transform: [{ scale: 0.99 }]
+  },
+  disabled: {
+    opacity: 0.55
   }
 });

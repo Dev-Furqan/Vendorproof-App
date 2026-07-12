@@ -13,8 +13,11 @@ export const extractionResultSchema = z.object({
 
 export type ExtractionResult = z.infer<typeof extractionResultSchema>;
 
-export async function extractDocumentFieldsFromImage(imageBase64: string, model = "openai/gpt-4.1-mini") {
-  const apiKey = process.env.OPENROUTER_API_KEY;
+export async function extractDocumentFieldsFromImage(imageBase64: string, model = "openai/gpt-4.1-mini", accessToken?: string) {
+  const apiResult = await extractViaVendorProofApi(imageBase64, model, accessToken);
+  if (apiResult) return apiResult;
+
+  const apiKey = process.env.EXPO_PUBLIC_OPENROUTER_API_KEY ?? process.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
     return extractionResultSchema.parse({
@@ -53,7 +56,8 @@ export async function extractDocumentFieldsFromImage(imageBase64: string, model 
           ]
         }
       ],
-      response_format: { type: "json_object" }
+      response_format: { type: "json_object" },
+      max_tokens: 800
     })
   });
 
@@ -63,5 +67,68 @@ export async function extractDocumentFieldsFromImage(imageBase64: string, model 
 
   const payload = await response.json();
   const content = payload.choices?.[0]?.message?.content ?? "{}";
-  return extractionResultSchema.parse(JSON.parse(content));
+  return parseExtractionContent(content);
+}
+
+async function extractViaVendorProofApi(imageBase64: string, model: string, accessToken?: string) {
+  const apiUrl = process.env.EXPO_PUBLIC_VENDORPROOF_API_URL?.replace(/\/$/, "");
+  if (!apiUrl || !accessToken) return null;
+
+  try {
+    const response = await fetch(`${apiUrl}/api/mobile/extract-document`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        "content-type": "application/json"
+      },
+      body: JSON.stringify({ imageBase64, model })
+    });
+
+    if (response.status === 404) return null;
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(typeof payload.error === "string" ? payload.error : `OpenRouter extraction failed: ${response.status}`);
+    }
+
+    return extractionResultSchema.parse(payload);
+  } catch (error) {
+    if (error instanceof TypeError) return null;
+    throw error;
+  }
+}
+
+export function parseExtractionContent(content: string) {
+  const stripped = content
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
+
+  const direct = safeJsonParse(stripped);
+  if (direct) return extractionResultSchema.parse(direct);
+
+  const objectMatch = stripped.match(/\{[\s\S]*\}/);
+  if (objectMatch) {
+    const matched = safeJsonParse(objectMatch[0]);
+    if (matched) return extractionResultSchema.parse(matched);
+  }
+
+  return extractionResultSchema.parse({
+    documentType: null,
+    businessName: null,
+    policyOrLicenseNumber: null,
+    effectiveDate: null,
+    expirationDate: null,
+    issuingCarrierOrAuthority: null,
+    confidence: null,
+    flags: ["malformed_ai_json", "needs_manual_review"]
+  });
+}
+
+function safeJsonParse(value: string) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
 }

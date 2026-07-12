@@ -178,6 +178,11 @@ export function useComplianceData() {
         () => load(true)
       );
     });
+    channel.on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "organizations", filter: `id=eq.${data.organization.id}` },
+      () => load(true)
+    );
     channel.subscribe();
     return () => {
       supabase.removeChannel(channel);

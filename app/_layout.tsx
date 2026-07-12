@@ -10,7 +10,7 @@ import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import { completeAuthFromUrl, isAuthCallbackUrl } from "@/lib/supabase/auth";
+import { completeAuthFromUrl, isAuthCallbackUrl, isPasswordRecoveryUrl } from "@/lib/supabase/auth";
 import { colors } from "@/lib/theme";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -25,8 +25,9 @@ export default function RootLayout() {
       if (!isAuthCallbackUrl(url)) return;
       try {
         if (!url) return;
+        const isRecovery = isPasswordRecoveryUrl(url);
         const completed = await completeAuthFromUrl(url);
-        if (completed) router.replace("/(tabs)");
+        if (completed) router.replace((isRecovery ? "/(auth)/reset-password" : "/(tabs)") as never);
       } catch (authError) {
         const message = authError instanceof Error ? authError.message : "Could not finish Google sign in.";
         router.replace({ pathname: "/(auth)/login", params: { authError: message } });
