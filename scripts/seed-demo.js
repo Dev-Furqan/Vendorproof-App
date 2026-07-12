@@ -155,18 +155,50 @@ async function deleteAuthUsers() {
 }
 
 async function insert(table, rows) {
-  const { error } = await supabase.from(table).insert(rows);
-  if (error) throw new Error(`${table}: ${error.message}`);
+  await writeRows("insert", table, rows, { optional: false });
 }
 
 async function optionalInsert(table, rows) {
-  const { error } = await supabase.from(table).insert(rows);
-  if (error && !isMissingTable(error) && !isMissingColumn(error)) throw new Error(`${table}: ${error.message}`);
+  await writeRows("insert", table, rows, { optional: true });
 }
 
 async function optionalUpsert(table, row) {
-  const { error } = await supabase.from(table).upsert(row);
-  if (error && !isMissingTable(error) && !isMissingColumn(error)) throw new Error(`${table}: ${error.message}`);
+  await writeRows("upsert", table, row, { optional: true });
+}
+
+async function writeRows(method, table, rows, { optional }) {
+  let payload = cloneRows(rows);
+  const strippedColumns = new Set();
+
+  for (let attempt = 0; attempt < 30; attempt += 1) {
+    const query = method === "upsert" ? supabase.from(table).upsert(payload) : supabase.from(table).insert(payload);
+    const { error } = await query;
+    if (!error) return;
+
+    if (optional && isMissingTable(error)) {
+      console.warn(`Skipping optional table ${table}: ${error.message}`);
+      return;
+    }
+
+    const missingColumn = getMissingColumn(error);
+    if (missingColumn && hasColumn(payload, missingColumn)) {
+      if (!strippedColumns.has(missingColumn)) {
+        console.warn(`Column ${table}.${missingColumn} is not in this database schema; seeding without it.`);
+        strippedColumns.add(missingColumn);
+      }
+      payload = stripColumn(payload, missingColumn);
+      continue;
+    }
+
+    if (optional && isMissingColumn(error)) {
+      console.warn(`Skipping optional write to ${table}: ${error.message}`);
+      return;
+    }
+
+    throw new Error(`${table}: ${error.message}`);
+  }
+
+  throw new Error(`${table}: too many schema compatibility retries.`);
 }
 
 function isMissingTable(error) {
@@ -175,6 +207,38 @@ function isMissingTable(error) {
 
 function isMissingColumn(error) {
   return error.code === "42703" || error.code === "PGRST204" || /column|schema cache/i.test(error.message);
+}
+
+function getMissingColumn(error) {
+  if (!isMissingColumn(error)) return null;
+  const message = error.message ?? "";
+  const quoted = message.match(/'([^']+)' column/);
+  if (quoted?.[1]) return quoted[1];
+  const plain = message.match(/column "([^"]+)"/i);
+  if (plain?.[1]) return plain[1];
+  const doesNotExist = message.match(/column ([a-zA-Z0-9_]+) does not exist/i);
+  if (doesNotExist?.[1]) return doesNotExist[1];
+  return null;
+}
+
+function cloneRows(rows) {
+  return JSON.parse(JSON.stringify(rows));
+}
+
+function hasColumn(rows, column) {
+  const list = Array.isArray(rows) ? rows : [rows];
+  return list.some((row) => row && Object.prototype.hasOwnProperty.call(row, column));
+}
+
+function stripColumn(rows, column) {
+  const strip = (row) => {
+    if (!row || typeof row !== "object") return row;
+    const copy = { ...row };
+    delete copy[column];
+    return copy;
+  };
+
+  return Array.isArray(rows) ? rows.map(strip) : strip(rows);
 }
 
 function template(key, name, documentType) {
