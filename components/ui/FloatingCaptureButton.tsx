@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Pressable, StyleSheet } from "react-native";
+import { Platform, Pressable, StyleSheet } from "react-native";
 
 import { colors } from "@/lib/theme";
 
@@ -23,11 +23,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.accent,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 18,
-    elevation: 8,
+    ...(Platform.OS === "web"
+      ? { boxShadow: "0 8px 18px rgba(0, 0, 0, 0.3)" }
+      : {
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.3,
+          shadowRadius: 18,
+          elevation: 8
+        }),
     zIndex: 50
   },
   pressed: {

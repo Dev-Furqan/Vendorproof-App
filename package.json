@@ -38,6 +38,7 @@
     "react-native": "latest",
     "react-native-gesture-handler": "~2.32.0",
     "react-native-reanimated": "4.5.0",
+    "react-native-reanimated-carousel": "^4.0.3",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "latest",
     "react-native-url-polyfill": "latest",

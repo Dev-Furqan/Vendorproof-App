@@ -1,5 +1,6 @@
 import { StyleSheet, View } from "react-native";
 
+import { FadeInView } from "@/components/ui/FadeInView";
 import { Text } from "@/components/ui/Text";
 import { colors } from "@/lib/theme";
 import type { ComplianceStatus } from "@/types/compliance";
@@ -55,19 +56,21 @@ const badgeStyles: Record<ComplianceStatus, { label: string; className: string; 
   }
 };
 
-export function StatusBadge({ status, label }: { status: ComplianceStatus; label?: string }) {
+export function StatusBadge({ status, label, delay = 0 }: { status: ComplianceStatus; label?: string; delay?: number }) {
   const badge = badgeStyles[status];
 
   return (
-    <View
-      className={`flex-row items-center gap-1.5 self-start rounded-full border px-2.5 py-1 ${badge.className}`}
-      style={[styles.badge, { backgroundColor: badge.backgroundColor, borderColor: badge.borderColor }]}
-    >
-      <View className={`h-1.5 w-1.5 rounded-full ${badge.dot}`} style={[styles.dot, { backgroundColor: badge.color }]} />
-      <Text className="text-xs font-semibold" style={{ color: badge.color }}>
-        {label ?? badge.label}
-      </Text>
-    </View>
+    <FadeInView delay={delay} distance={4}>
+      <View
+        className={`flex-row items-center gap-1.5 self-start rounded-full border px-2.5 py-1 ${badge.className}`}
+        style={[styles.badge, { backgroundColor: badge.backgroundColor, borderColor: badge.borderColor }]}
+      >
+        <View className={`h-1.5 w-1.5 rounded-full ${badge.dot}`} style={[styles.dot, { backgroundColor: badge.color }]} />
+        <Text className="text-xs font-semibold" style={{ color: badge.color }}>
+          {label ?? badge.label}
+        </Text>
+      </View>
+    </FadeInView>
   );
 }
 

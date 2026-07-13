@@ -10,6 +10,7 @@ import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Text } from "@/components/ui/Text";
 import { getCurrentWorkspace, useComplianceData } from "@/lib/compliance/data";
 import { createDocumentSignedUrl } from "@/lib/documents/mobile-documents";
+import { toFriendlyNetworkError } from "@/lib/network";
 import { supabase } from "@/lib/supabase/client";
 import { colors } from "@/lib/theme";
 
@@ -49,9 +50,13 @@ export default function DocumentReviewScreen() {
       return;
     }
 
-    createDocumentSignedUrl(document.latestVersion.storage_path).then((url) => {
-      if (mounted) setPreviewUrl(url);
-    });
+    createDocumentSignedUrl(document.latestVersion.storage_path)
+      .then((url) => {
+        if (mounted) setPreviewUrl(url);
+      })
+      .catch((error) => {
+        if (mounted) setActionError(toFriendlyNetworkError(error, "Could not load the document preview."));
+      });
 
     return () => {
       mounted = false;
@@ -112,7 +117,7 @@ export default function DocumentReviewScreen() {
 
       await reload(true);
     } catch (reviewError) {
-      setActionError(reviewError instanceof Error ? reviewError.message : "Could not save review.");
+      setActionError(toFriendlyNetworkError(reviewError, "Could not save review."));
     } finally {
       setSaving(false);
     }

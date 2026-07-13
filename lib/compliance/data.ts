@@ -1,13 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { supabase, realtimeTables } from "@/lib/supabase/client";
+import { toFriendlyNetworkError, withTimeout } from "@/lib/network";
 import {
   documentSelectBase,
-  documentSelectWithAi,
-  isMissingColumnError,
   requirementSelectBase,
-  requirementSelectWithRules,
-  type SchemaCompatResult,
   withDocumentDefaults,
   withRequirementDefaults
 } from "@/lib/compliance/schema";
@@ -79,7 +76,7 @@ export async function loadComplianceData(): Promise<ComplianceData> {
   const { organization } = await getCurrentWorkspace();
   if (!organization) return emptyData;
 
-  const [propertiesResult, vendorsResult, initialRequirementsResult, initialDocumentsResult] = await Promise.all([
+  const [propertiesResult, vendorsResult, requirementsResult, documentsResult] = await Promise.all([
     supabase
       .from("properties")
       .select("id, name, address_line1, city, state, postal_code, unit_count, property_type, created_at")
@@ -90,20 +87,9 @@ export async function loadComplianceData(): Promise<ComplianceData> {
       .select("id, name, email, phone, trade, category, status, default_requirement_template_id, created_at")
       .eq("organization_id", organization.id)
       .order("name", { ascending: true }),
-    supabase.from("vendor_requirements").select(requirementSelectWithRules).eq("organization_id", organization.id),
-    supabase.from("documents").select(documentSelectWithAi).eq("organization_id", organization.id)
+    supabase.from("vendor_requirements").select(requirementSelectBase).eq("organization_id", organization.id),
+    supabase.from("documents").select(documentSelectBase).eq("organization_id", organization.id)
   ]);
-
-  let requirementsResult = initialRequirementsResult as SchemaCompatResult;
-  let documentsResult = initialDocumentsResult as SchemaCompatResult;
-
-  if (isMissingColumnError(requirementsResult.error)) {
-    requirementsResult = (await supabase.from("vendor_requirements").select(requirementSelectBase).eq("organization_id", organization.id)) as SchemaCompatResult;
-  }
-
-  if (isMissingColumnError(documentsResult.error)) {
-    documentsResult = (await supabase.from("documents").select(documentSelectBase).eq("organization_id", organization.id)) as SchemaCompatResult;
-  }
 
   const baseError = propertiesResult.error ?? vendorsResult.error ?? requirementsResult.error ?? documentsResult.error;
   if (baseError) throw new Error(baseError.message);
@@ -145,26 +131,35 @@ export async function loadComplianceData(): Promise<ComplianceData> {
 }
 
 export function useComplianceData() {
+  const mountedRef = useRef(true);
   const [data, setData] = useState<ComplianceData>(emptyData);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async (quiet = false) => {
+    if (!mountedRef.current) return;
     if (!quiet) setLoading(true);
     setError(null);
     try {
-      setData(await loadComplianceData());
+      const nextData = await withTimeout(loadComplianceData());
+      if (mountedRef.current) setData(nextData);
     } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : "Could not load compliance data.");
+      if (mountedRef.current) setError(toFriendlyNetworkError(loadError, "Could not load compliance data."));
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (mountedRef.current) {
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
   }, []);
 
   useEffect(() => {
-    load();
+    mountedRef.current = true;
+    void load();
+    return () => {
+      mountedRef.current = false;
+    };
   }, [load]);
 
   useEffect(() => {
@@ -183,9 +178,14 @@ export function useComplianceData() {
       { event: "*", schema: "public", table: "organizations", filter: `id=eq.${data.organization.id}` },
       () => load(true)
     );
-    channel.subscribe();
+    channel.subscribe((status, error) => {
+      if (!mountedRef.current) return;
+      if (status === "CHANNEL_ERROR") {
+        setError(toFriendlyNetworkError(error, "Realtime updates are temporarily unavailable."));
+      }
+    });
     return () => {
-      supabase.removeChannel(channel);
+      void supabase.removeChannel(channel);
     };
   }, [data.organization?.id, load]);
 

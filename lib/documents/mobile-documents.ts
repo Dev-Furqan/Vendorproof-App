@@ -1,5 +1,6 @@
 import { extractDocumentFieldsFromImage, type ExtractionResult } from "@/lib/ai/extraction";
 import { getCurrentWorkspace } from "@/lib/compliance/data";
+import { fetchWithTimeout, toFriendlyNetworkError } from "@/lib/network";
 import { supabase } from "@/lib/supabase/client";
 import type { VendorRequirementRecord } from "@/types/compliance";
 
@@ -132,7 +133,7 @@ export async function uploadCapturedDocument({
     onStep?.("success");
     return { documentId, extraction, extractionError: null };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "AI extraction failed.";
+    const message = toFriendlyNetworkError(error, "AI extraction failed.");
     await supabase
       .from("documents")
       .update({
@@ -154,7 +155,7 @@ export async function createDocumentSignedUrl(storagePath: string) {
 }
 
 async function fetchImageBytes(uri: string) {
-  const response = await fetch(uri);
+  const response = await fetchWithTimeout(uri);
   if (!response.ok) throw new Error("Could not read the captured image.");
   return response.arrayBuffer();
 }

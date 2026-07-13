@@ -4,11 +4,14 @@ import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Image, Linking, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 
+import { AnimatedPressable } from "@/components/ui/AnimatedPressable";
 import { Button } from "@/components/ui/Button";
 import { Text } from "@/components/ui/Text";
 import { useComplianceData } from "@/lib/compliance/data";
 import { uploadCapturedDocument, type UploadStep } from "@/lib/documents/mobile-documents";
+import { toFriendlyNetworkError } from "@/lib/network";
 import { colors } from "@/lib/theme";
 import type { VendorRequirementRecord } from "@/types/compliance";
 
@@ -43,6 +46,8 @@ export default function CaptureScreen() {
   const [uploadStep, setUploadStep] = useState<UploadStep | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [manualDocumentId, setManualDocumentId] = useState<string | null>(null);
+  const shutterScale = useSharedValue(1);
+  const flashOpacity = useSharedValue(0);
 
   const requirements = useMemo(
     () =>
@@ -58,9 +63,13 @@ export default function CaptureScreen() {
 
   async function requestCamera() {
     setError(null);
-    const result = await requestPermission();
-    if (!result.granted && !result.canAskAgain) {
-      setError("Camera permission is blocked. Open device settings to re-enable camera access for VendorProof.");
+    try {
+      const result = await requestPermission();
+      if (!result.granted && !result.canAskAgain) {
+        setError("Camera permission is blocked. Open device settings to re-enable camera access for VendorProof.");
+      }
+    } catch (permissionError) {
+      setError(toFriendlyNetworkError(permissionError, "Could not request camera permission."));
     }
   }
 
@@ -68,6 +77,8 @@ export default function CaptureScreen() {
     if (!cameraRef.current || capturing) return;
     setError(null);
     setCapturing(true);
+    shutterScale.value = withSequence(withTiming(0.9, { duration: 70 }), withTiming(1.06, { duration: 90 }), withTiming(1, { duration: 120 }));
+    flashOpacity.value = withSequence(withTiming(0.28, { duration: 80 }), withTiming(0, { duration: 180 }));
     try {
       const photo = await cameraRef.current.takePictureAsync({ quality: 0.88, base64: true, skipProcessing: false });
       if (!photo?.uri) throw new Error("The camera did not return a usable image.");
@@ -79,27 +90,39 @@ export default function CaptureScreen() {
     }
   }
 
+  const shutterAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: shutterScale.value }]
+  }));
+
+  const flashStyle = useAnimatedStyle(() => ({
+    opacity: flashOpacity.value
+  }));
+
   async function pickFromGallery() {
     setError(null);
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permissionResult.granted) {
-      setError("Photo library permission was denied. You can still use the camera, or enable photo access in settings.");
-      return;
-    }
+    try {
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permissionResult.granted) {
+        setError("Photo library permission was denied. You can still use the camera, or enable photo access in settings.");
+        return;
+      }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.9,
-      base64: true
-    });
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.9,
+        base64: true
+      });
 
-    if (result.canceled) return;
-    const asset = result.assets[0];
-    if (!asset?.uri) {
-      setError("The selected image could not be opened. Try a different photo.");
-      return;
+      if (result.canceled) return;
+      const asset = result.assets[0];
+      if (!asset?.uri) {
+        setError("The selected image could not be opened. Try a different photo.");
+        return;
+      }
+      setCaptured({ uri: asset.uri, base64: asset.base64 ?? null });
+    } catch (pickerError) {
+      setError(toFriendlyNetworkError(pickerError, "Could not open the photo library."));
     }
-    setCaptured({ uri: asset.uri, base64: asset.base64 ?? null });
   }
 
   async function usePhoto() {
@@ -133,7 +156,7 @@ export default function CaptureScreen() {
       router.replace(`/documents/${result.documentId}`);
     } catch (uploadError) {
       setUploadStep(null);
-      setError(uploadError instanceof Error ? uploadError.message : "Upload failed. Try again or enter the document manually.");
+      setError(toFriendlyNetworkError(uploadError, "Upload failed. Try again or enter the document manually."));
     }
   }
 
@@ -242,6 +265,7 @@ export default function CaptureScreen() {
   return (
     <View style={styles.root}>
       <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} facing="back" />
+      <Animated.View pointerEvents="none" style={[styles.flash, flashStyle]} />
       <View style={styles.overlay}>
         <View style={styles.topBar}>
           <Pressable style={styles.closeButton} disabled={capturing} onPress={() => router.back()}>
@@ -266,11 +290,13 @@ export default function CaptureScreen() {
 
         <View style={styles.bottomPanel}>
           <View style={styles.captureRow}>
-            <Pressable style={styles.galleryButton} disabled={capturing} onPress={pickFromGallery}>
+            <AnimatedPressable style={styles.galleryButton} disabled={capturing} onPress={pickFromGallery}>
               <MaterialCommunityIcons name="image-outline" size={24} color={colors.foreground} />
-            </Pressable>
+            </AnimatedPressable>
             <Pressable style={styles.shutter} disabled={capturing} onPress={capturePhoto}>
-              {capturing ? <ActivityIndicator color={colors.accentForeground} /> : <View style={styles.shutterInner} />}
+              <Animated.View style={[styles.shutterVisual, shutterAnimatedStyle]}>
+                {capturing ? <ActivityIndicator color={colors.accentForeground} /> : <View style={styles.shutterInner} />}
+              </Animated.View>
             </Pressable>
             <View style={styles.spacerButton} />
           </View>
@@ -296,7 +322,7 @@ function RequirementOption({
   onPress: () => void;
 }) {
   return (
-    <Pressable style={[styles.requirementOption, active && styles.requirementOptionActive]} disabled={disabled} onPress={onPress}>
+    <AnimatedPressable style={[styles.requirementOption, active && styles.requirementOptionActive]} disabled={disabled} onPress={onPress}>
       <View style={styles.requirementCopy}>
         <Text variant="title">{vendorName}</Text>
         <Text variant="muted">
@@ -304,7 +330,7 @@ function RequirementOption({
         </Text>
       </View>
       {active ? <MaterialCommunityIcons name="check-circle" size={22} color={colors.accent} /> : null}
-    </Pressable>
+    </AnimatedPressable>
   );
 }
 
@@ -332,6 +358,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 20,
     backgroundColor: "rgba(0,0,0,0.18)"
+  },
+  flash: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: "rgba(247, 248, 251, 0.92)",
+    zIndex: 1
   },
   topBar: {
     paddingTop: 36,
@@ -416,6 +451,13 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(8, 13, 22, 0.82)"
   },
   shutter: {
+    width: 82,
+    height: 82,
+    borderRadius: 999,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  shutterVisual: {
     width: 82,
     height: 82,
     borderRadius: 999,

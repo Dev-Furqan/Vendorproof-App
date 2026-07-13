@@ -10,3 +10,6 @@ expo-env.d.ts
 .env
 .env.local
 .env.*.local
+
+node_modules/
+*.log

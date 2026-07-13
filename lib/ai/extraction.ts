@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { fetchWithTimeout, toFriendlyNetworkError } from "@/lib/network";
+
 export const extractionResultSchema = z.object({
   documentType: z.string().nullable(),
   businessName: z.string().nullable(),
@@ -32,7 +34,7 @@ export async function extractDocumentFieldsFromImage(imageBase64: string, model 
     });
   }
 
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const response = await fetchWithTimeout("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -59,7 +61,7 @@ export async function extractDocumentFieldsFromImage(imageBase64: string, model 
       response_format: { type: "json_object" },
       max_tokens: 800
     })
-  });
+  }, 30000);
 
   if (!response.ok) {
     throw new Error(`OpenRouter extraction failed: ${response.status}`);
@@ -75,14 +77,14 @@ async function extractViaVendorProofApi(imageBase64: string, model: string, acce
   if (!apiUrl || !accessToken) return null;
 
   try {
-    const response = await fetch(`${apiUrl}/api/mobile/extract-document`, {
+    const response = await fetchWithTimeout(`${apiUrl}/api/mobile/extract-document`, {
       method: "POST",
       headers: {
         authorization: `Bearer ${accessToken}`,
         "content-type": "application/json"
       },
       body: JSON.stringify({ imageBase64, model })
-    });
+    }, 30000);
 
     if (response.status === 404) return null;
     const payload = await response.json().catch(() => ({}));
@@ -93,6 +95,9 @@ async function extractViaVendorProofApi(imageBase64: string, model: string, acce
     return extractionResultSchema.parse(payload);
   } catch (error) {
     if (error instanceof TypeError) return null;
+    if (error instanceof Error && /abort|timeout|network|fetch/i.test(error.message)) {
+      throw new Error(toFriendlyNetworkError(error, "AI extraction is temporarily unavailable."));
+    }
     throw error;
   }
 }

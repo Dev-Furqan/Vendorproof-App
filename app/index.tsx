@@ -1,43 +1,47 @@
 import { Redirect } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
 
+import { AnimatedSplashScreen } from "@/components/launch/AnimatedSplashScreen";
 import { ensureMobileWorkspace } from "@/lib/auth/workspace";
+import { hasCompletedOnboarding } from "@/lib/onboarding";
 import { supabase } from "@/lib/supabase/client";
-import { colors } from "@/lib/theme";
 
 export default function Index() {
-  const [route, setRoute] = useState<"/(auth)/login" | "/(tabs)" | null>(null);
+  const [route, setRoute] = useState<"/onboarding" | "/(auth)/login" | "/(tabs)" | null>(null);
+  const [splashFinished, setSplashFinished] = useState(false);
+  const [nativeSplashHidden, setNativeSplashHidden] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
     supabase.auth
       .getSession()
       .then(async ({ data }) => {
         if (!data.session?.user) {
-          setRoute("/(auth)/login");
+          const completedOnboarding = await hasCompletedOnboarding();
+          if (mounted) setRoute(completedOnboarding ? "/(auth)/login" : "/onboarding");
           return;
         }
 
         await ensureMobileWorkspace(data.session.user);
-        setRoute("/(tabs)");
+        if (mounted) setRoute("/(tabs)");
       })
-      .catch(() => setRoute("/(auth)/login"));
+      .catch(() => {
+        if (mounted) setRoute("/(auth)/login");
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  if (route) return <Redirect href={route} />;
-
-  return (
-    <View style={styles.loading}>
-      <ActivityIndicator color={colors.accent} />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.background
+  function hideNativeSplash() {
+    if (nativeSplashHidden) return;
+    setNativeSplashHidden(true);
+    SplashScreen.hideAsync().catch(() => {});
   }
-});
+
+  if (route && splashFinished) return <Redirect href={route as never} />;
+
+  return <AnimatedSplashScreen ready={Boolean(route)} onFinish={() => setSplashFinished(true)} onReadyForNativeHide={hideNativeSplash} />;
+}

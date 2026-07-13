@@ -1,3 +1,5 @@
+import { Platform } from "react-native";
+
 export const colors = {
   background: "#05070d",
   surface: "#0b111d",
@@ -35,13 +37,18 @@ export const radii = {
 } as const;
 
 export const shadows = {
-  card: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.18,
-    shadowRadius: 18,
-    elevation: 2
-  }
+  card:
+    Platform.OS === "web"
+      ? {
+          boxShadow: "0 4px 18px rgba(0, 0, 0, 0.18)"
+        }
+      : {
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.18,
+          shadowRadius: 18,
+          elevation: 2
+        }
 } as const;
 
 export function alpha(hex: string, opacity: number) {

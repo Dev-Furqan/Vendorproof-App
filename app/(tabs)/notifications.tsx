@@ -1,7 +1,8 @@
 import { router } from "expo-router";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { AppHeader } from "@/components/ui/AppHeader";
+import { AnimatedPressable } from "@/components/ui/AnimatedPressable";
 import { Card } from "@/components/ui/Card";
 import { FloatingCaptureButton } from "@/components/ui/FloatingCaptureButton";
 import { Screen } from "@/components/ui/Screen";
@@ -33,14 +34,13 @@ export default function NotificationsScreen() {
             </Card>
           ) : null}
 
-          {alerts.map((alert) => (
-            <Pressable
+          {alerts.map((alert, index) => (
+            <AnimatedPressable
               key={alert.id}
               disabled={!alert.documentId}
               onPress={() => {
                 if (alert.documentId) router.push(`/documents/${alert.documentId}`);
               }}
-              style={({ pressed }) => [pressed && styles.pressed]}
             >
               <Card>
                 <View style={styles.alertTop}>
@@ -52,9 +52,9 @@ export default function NotificationsScreen() {
                   </View>
                   <View style={styles.unreadDot} />
                 </View>
-                <StatusBadge status={alert.status} label={alert.dueLabel} />
+                <StatusBadge status={alert.status} label={alert.dueLabel} delay={index * 35} />
               </Card>
-            </Pressable>
+            </AnimatedPressable>
           ))}
 
           {!loading && alerts.length === 0 ? (
@@ -80,9 +80,6 @@ const styles = StyleSheet.create({
   },
   list: {
     gap: 12
-  },
-  pressed: {
-    opacity: 0.82
   },
   dateLabel: {
     marginBottom: 8,

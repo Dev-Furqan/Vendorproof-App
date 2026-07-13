@@ -12,6 +12,7 @@ export default function AuthCallbackScreen() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let mounted = true;
     const query = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
       if (Array.isArray(value)) {
@@ -26,11 +27,16 @@ export default function AuthCallbackScreen() {
 
     completeAuthFromUrl(callbackUrl)
       .then((completed) => {
+        if (!mounted) return;
         router.replace((completed ? (isRecovery ? "/(auth)/reset-password" : "/(tabs)") : "/(auth)/login") as never);
       })
       .catch((callbackError) => {
-        setError(callbackError instanceof Error ? callbackError.message : "Could not finish sign in.");
+        if (mounted) setError(callbackError instanceof Error ? callbackError.message : "Could not finish sign in.");
       });
+
+    return () => {
+      mounted = false;
+    };
   }, [params]);
 
   return (

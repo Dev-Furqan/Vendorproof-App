@@ -1,21 +1,22 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
+import { AnimatedPressable } from "@/components/ui/AnimatedPressable";
 import { Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Text } from "@/components/ui/Text";
 import { colors } from "@/lib/theme";
 import type { PropertySummary } from "@/types/compliance";
 
-export function PropertyCard({ property }: { property: PropertySummary }) {
+export function PropertyCard({ property, index = 0 }: { property: PropertySummary; index?: number }) {
   return (
-    <Pressable style={({ pressed }) => [pressed && styles.pressed]}>
+    <AnimatedPressable>
       <Card>
         <View style={styles.topRow}>
           <View style={styles.iconWrap}>
             <MaterialCommunityIcons name="office-building-outline" size={22} color={colors.accent} />
           </View>
-          <StatusBadge status={property.status} label={`${property.compliant}/${property.total} Compliant`} />
+          <StatusBadge status={property.status} label={`${property.compliant}/${property.total} Compliant`} delay={index * 25} />
         </View>
         <View style={styles.copy}>
           <Text variant="title">{property.name}</Text>
@@ -33,14 +34,11 @@ export function PropertyCard({ property }: { property: PropertySummary }) {
           <MaterialCommunityIcons name="chevron-right" size={22} color={colors.accent} />
         </View>
       </Card>
-    </Pressable>
+    </AnimatedPressable>
   );
 }
 
 const styles = StyleSheet.create({
-  pressed: {
-    opacity: 0.82
-  },
   topRow: {
     flexDirection: "row",
     alignItems: "flex-start",

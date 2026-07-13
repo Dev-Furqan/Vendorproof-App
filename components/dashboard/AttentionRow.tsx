@@ -1,32 +1,33 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
+import { AnimatedPressable } from "@/components/ui/AnimatedPressable";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Text } from "@/components/ui/Text";
 import { colors } from "@/lib/theme";
 import type { AttentionItem } from "@/types/compliance";
 
-export function AttentionRow({ item }: { item: AttentionItem }) {
+export function AttentionRow({ item, index = 0 }: { item: AttentionItem; index?: number }) {
   const openDocument = () => {
     if (item.documentId) router.push(`/documents/${item.documentId}`);
   };
 
   return (
-    <Pressable disabled={!item.documentId} style={({ pressed }) => [styles.row, pressed && styles.pressed]} onPress={openDocument}>
+    <AnimatedPressable disabled={!item.documentId} style={styles.row} onPress={openDocument}>
       <View style={styles.iconWrap}>
         <MaterialCommunityIcons name="file-document-outline" size={21} color={colors.accent} />
       </View>
       <View style={styles.body}>
         <View style={styles.titleRow}>
           <Text variant="title">{item.vendor}</Text>
-          <StatusBadge status={item.status} label={item.dueLabel} />
+          <StatusBadge status={item.status} label={item.dueLabel} delay={index * 35} />
         </View>
         <Text variant="muted">
           {item.property} - {item.requirement}
         </Text>
       </View>
-    </Pressable>
+    </AnimatedPressable>
   );
 }
 
@@ -40,9 +41,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.surface
-  },
-  pressed: {
-    opacity: 0.82
   },
   iconWrap: {
     width: 42,

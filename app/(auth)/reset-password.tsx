@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
+import { toFriendlyNetworkError } from "@/lib/network";
 import { supabase } from "@/lib/supabase/client";
 import { colors } from "@/lib/theme";
 
@@ -37,11 +38,15 @@ export default function ResetPasswordScreen() {
 
   async function updatePassword(values: ResetForm) {
     setFormState({ submitting: true, error: null });
-    const { error } = await supabase.auth.updateUser({ password: values.password });
-    setFormState({ submitting: false, error: error?.message ?? null });
+    try {
+      const { error } = await supabase.auth.updateUser({ password: values.password });
+      setFormState({ submitting: false, error: error?.message ?? null });
 
-    if (!error) {
-      router.replace("/(tabs)");
+      if (!error) {
+        router.replace("/(tabs)");
+      }
+    } catch (error) {
+      setFormState({ submitting: false, error: toFriendlyNetworkError(error, "Could not update password.") });
     }
   }
 

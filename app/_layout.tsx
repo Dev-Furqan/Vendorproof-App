@@ -17,10 +17,6 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   useEffect(() => {
-    SplashScreen.hideAsync().catch(() => {});
-  }, []);
-
-  useEffect(() => {
     async function handleUrl(url: string | null) {
       if (!isAuthCallbackUrl(url)) return;
       try {
@@ -46,11 +42,19 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.root}>
       <SafeAreaProvider>
         <StatusBar style="light" />
-        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            animation: "slide_from_right",
+            animationDuration: 240,
+            contentStyle: { backgroundColor: colors.background }
+          }}
+        >
           <Stack.Screen name="index" />
+          <Stack.Screen name="onboarding" />
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="capture" options={{ presentation: "fullScreenModal" }} />
+          <Stack.Screen name="capture" options={{ animation: "slide_from_bottom", presentation: "fullScreenModal" }} />
           <Stack.Screen name="documents/[documentId]" />
         </Stack>
       </SafeAreaProvider>

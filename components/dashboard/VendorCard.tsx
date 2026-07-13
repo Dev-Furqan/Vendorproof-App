@@ -1,20 +1,21 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
+import { AnimatedPressable } from "@/components/ui/AnimatedPressable";
 import { Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Text } from "@/components/ui/Text";
 import { colors } from "@/lib/theme";
 import type { VendorSummary } from "@/types/compliance";
 
-export function VendorCard({ vendor }: { vendor: VendorSummary }) {
+export function VendorCard({ vendor, index = 0 }: { vendor: VendorSummary; index?: number }) {
   const openDocument = () => {
     if (vendor.documentId) router.push(`/documents/${vendor.documentId}`);
   };
 
   return (
-    <Pressable disabled={!vendor.documentId} style={({ pressed }) => [pressed && styles.pressed]} onPress={openDocument}>
+    <AnimatedPressable disabled={!vendor.documentId} onPress={openDocument}>
       <Card>
         <View style={styles.row}>
           <View style={styles.iconWrap}>
@@ -28,20 +29,17 @@ export function VendorCard({ vendor }: { vendor: VendorSummary }) {
                   ID: V-{vendor.id.slice(0, 5).toUpperCase()} - {vendor.trade}
                 </Text>
               </View>
-              <StatusBadge status={vendor.status} />
+              <StatusBadge status={vendor.status} delay={index * 25} />
             </View>
             {vendor.expiresAt ? <Text variant="muted">Valid until {vendor.expiresAt}</Text> : null}
           </View>
         </View>
       </Card>
-    </Pressable>
+    </AnimatedPressable>
   );
 }
 
 const styles = StyleSheet.create({
-  pressed: {
-    opacity: 0.82
-  },
   row: {
     flexDirection: "row",
     alignItems: "flex-start",

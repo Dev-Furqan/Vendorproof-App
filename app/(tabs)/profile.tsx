@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { getCurrentWorkspace } from "@/lib/compliance/data";
+import { toFriendlyNetworkError } from "@/lib/network";
 import { supabase } from "@/lib/supabase/client";
 import { colors } from "@/lib/theme";
 
@@ -17,22 +18,40 @@ export default function ProfileScreen() {
     role: null,
     email: null
   });
+  const [profileError, setProfileError] = useState<string | null>(null);
+  const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
     getCurrentWorkspace()
       .then(({ user, organization }) => {
+        if (!mounted) return;
         setWorkspace({
           name: organization?.name ?? "No organization yet",
           role: organization?.role ?? null,
           email: user?.email ?? null
         });
       })
-      .catch(() => {});
+      .catch((error) => {
+        if (mounted) setProfileError(toFriendlyNetworkError(error, "Could not load profile."));
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   async function signOut() {
-    await supabase.auth.signOut();
-    router.replace("/(auth)/login");
+    setSigningOut(true);
+    setProfileError(null);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.replace("/(auth)/login");
+    } catch (error) {
+      setProfileError(toFriendlyNetworkError(error, "Could not sign out."));
+      setSigningOut(false);
+    }
   }
 
   const initials = workspace.name
@@ -77,8 +96,14 @@ export default function ProfileScreen() {
           <Text variant="muted">Realtime Supabase sync enabled</Text>
         </Card>
 
-        <Button variant="danger" onPress={signOut}>
-          Sign Out
+        {profileError ? (
+          <Card>
+            <Text className="text-missing">{profileError}</Text>
+          </Card>
+        ) : null}
+
+        <Button variant="danger" disabled={signingOut} onPress={signOut}>
+          {signingOut ? "Signing out..." : "Sign Out"}
         </Button>
       </View>
     </Screen>

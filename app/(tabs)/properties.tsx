@@ -31,8 +31,8 @@ export default function PropertiesScreen() {
         ) : null}
 
         <View style={styles.list}>
-          {rows.map((property) => (
-            <PropertyCard key={property.id} property={property} />
+          {rows.map((property, index) => (
+            <PropertyCard key={property.id} property={property} index={index} />
           ))}
           {!loading && rows.length === 0 ? (
             <Card>

@@ -2,6 +2,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet, View } from "react-native";
 
 import { Card } from "@/components/ui/Card";
+import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { Text } from "@/components/ui/Text";
 import { colors } from "@/lib/theme";
 import type { DashboardStat } from "@/types/compliance";
@@ -15,7 +16,7 @@ const metaByStatus = {
   never_responded: { text: "text-muted", color: colors.muted, icon: "progress-question" }
 };
 
-export function StatCard({ stat }: { stat: DashboardStat }) {
+export function StatCard({ stat, delay = 0 }: { stat: DashboardStat; delay?: number }) {
   const meta = metaByStatus[stat.status];
 
   return (
@@ -25,9 +26,7 @@ export function StatCard({ stat }: { stat: DashboardStat }) {
         <MaterialCommunityIcons name={meta.icon as never} size={20} color={meta.color} />
       </View>
       <View style={styles.valueBlock}>
-        <Text variant="display" className={meta.text}>
-          {stat.value}
-        </Text>
+        <AnimatedNumber value={stat.value} duration={240 + delay} className={meta.text} />
         <Text variant="muted">{stat.helper ?? "Live count"}</Text>
       </View>
     </Card>

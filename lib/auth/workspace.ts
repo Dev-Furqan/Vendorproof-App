@@ -1,5 +1,6 @@
 import type { User } from "@supabase/supabase-js";
 
+import { fetchWithTimeout, toFriendlyNetworkError } from "@/lib/network";
 import { supabase } from "@/lib/supabase/client";
 
 export async function ensureMobileWorkspace(user: User | null) {
@@ -7,6 +8,8 @@ export async function ensureMobileWorkspace(user: User | null) {
 
   const fullName = getStringMetadata(user.user_metadata?.full_name) ?? getStringMetadata(user.user_metadata?.name);
   const avatarUrl = getStringMetadata(user.user_metadata?.avatar_url);
+  const existingWorkspaceId = await getExistingWorkspaceId(user.id);
+  if (existingWorkspaceId) return existingWorkspaceId;
 
   const { data, error } = await supabase.rpc("ensure_user_workspace", {
     user_full_name: fullName,
@@ -15,15 +18,12 @@ export async function ensureMobileWorkspace(user: User | null) {
 
   if (error) {
     if (/function .*ensure_user_workspace|schema cache/i.test(error.message)) {
-      const existingWorkspaceId = await getExistingWorkspaceId(user.id);
-      if (existingWorkspaceId) return existingWorkspaceId;
-
       const apiWorkspaceId = await ensureWorkspaceViaApi(user);
       if (apiWorkspaceId) return apiWorkspaceId;
 
       throw new Error("Mobile account setup is not enabled yet. Apply the latest Supabase migration, then try again.");
     }
-    throw new Error(error.message);
+    throw new Error(toFriendlyNetworkError(error, error.message));
   }
 
   return typeof data === "string" ? data : null;
@@ -58,7 +58,7 @@ async function ensureWorkspaceViaApi(user: User) {
 
   const fullName = getStringMetadata(user.user_metadata?.full_name) ?? getStringMetadata(user.user_metadata?.name);
   const avatarUrl = getStringMetadata(user.user_metadata?.avatar_url);
-  const response = await fetch(`${apiUrl}/api/mobile/workspace`, {
+  const response = await fetchWithTimeout(`${apiUrl}/api/mobile/workspace`, {
     method: "POST",
     headers: {
       authorization: `Bearer ${session.access_token}`,

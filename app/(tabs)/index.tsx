@@ -7,6 +7,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { Card } from "@/components/ui/Card";
 import { FloatingCaptureButton } from "@/components/ui/FloatingCaptureButton";
+import { RefreshSettleView } from "@/components/ui/RefreshSettleView";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { useComplianceData } from "@/lib/compliance/data";
@@ -21,8 +22,18 @@ export default function DashboardScreen() {
 
   return (
     <>
-      <Screen refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={colors.accent} />}>
-        <View style={styles.stack}>
+      <Screen
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={refresh}
+            tintColor={colors.accent}
+            colors={[colors.accent]}
+            progressBackgroundColor={colors.surface}
+          />
+        }
+      >
+        <RefreshSettleView refreshing={refreshing} style={styles.stack}>
         <AppHeader showFilters onSearch={() => router.push("/(tabs)/vendors")} onFilters={() => router.push("/(tabs)/vendors")} />
         <View style={styles.hero}>
           <Text variant="headline">{organizationName}</Text>
@@ -38,8 +49,8 @@ export default function DashboardScreen() {
         ) : null}
 
         <View style={styles.statGrid}>
-          {stats.map((stat) => (
-            <StatCard key={stat.label} stat={stat} />
+          {stats.map((stat, index) => (
+            <StatCard key={stat.label} stat={stat} delay={index * 35} />
           ))}
         </View>
 
@@ -55,7 +66,7 @@ export default function DashboardScreen() {
           </View>
 
           {attention.length > 0 ? (
-            attention.map((item) => <AttentionRow key={item.id} item={item} />)
+            attention.map((item, index) => <AttentionRow key={item.id} item={item} index={index} />)
           ) : (
             <Card style={styles.emptyCard}>
               <MaterialCommunityIcons name="check-decagram-outline" size={28} color={colors.compliant} />
@@ -68,7 +79,7 @@ export default function DashboardScreen() {
             </Card>
           )}
         </View>
-        </View>
+        </RefreshSettleView>
       </Screen>
       <FloatingCaptureButton />
     </>

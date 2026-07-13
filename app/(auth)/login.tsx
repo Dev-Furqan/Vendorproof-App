@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { ensureMobileWorkspace } from "@/lib/auth/workspace";
+import { toFriendlyNetworkError } from "@/lib/network";
 import { oauthRedirectTo, signInWithGoogleOAuth } from "@/lib/supabase/auth";
 import { supabase } from "@/lib/supabase/client";
 import { colors } from "@/lib/theme";
@@ -45,22 +46,22 @@ export default function LoginScreen() {
     setSubmitting(true);
     setAuthError(null);
     setAuthMessage(null);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: values.email.trim().toLowerCase(),
-      password: values.password
-    });
-    setSubmitting(false);
-    if (error) {
-      setAuthError(toFriendlyAuthError(error.message));
-      return;
-    }
     try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: values.email.trim().toLowerCase(),
+        password: values.password
+      });
+      if (error) {
+        setAuthError(toFriendlyAuthError(error.message));
+        return;
+      }
       await ensureMobileWorkspace(data.user);
+      router.replace("/(tabs)");
     } catch (workspaceError) {
-      setAuthError(workspaceError instanceof Error ? workspaceError.message : "Could not prepare your mobile workspace.");
-      return;
+      setAuthError(toFriendlyNetworkError(workspaceError, "Could not prepare your mobile workspace."));
+    } finally {
+      setSubmitting(false);
     }
-    router.replace("/(tabs)");
   }
 
   async function signUp(values: AuthForm) {
@@ -73,32 +74,33 @@ export default function LoginScreen() {
     setSubmitting(true);
     setAuthError(null);
     setAuthMessage(null);
-    const { data, error } = await supabase.auth.signUp({
-      email: values.email.trim().toLowerCase(),
-      password: values.password,
-      options: {
-        data: { full_name: fullName },
-        emailRedirectTo: oauthRedirectTo
-      }
-    });
-    setSubmitting(false);
-
-    if (error) {
-      setAuthError(toFriendlyAuthError(error.message));
-      return;
-    }
-
-    if (!data.session) {
-      setAuthMessage("Account created. Check your email to confirm it, then sign in from the mobile app.");
-      setMode("login");
-      return;
-    }
-
     try {
+      const { data, error } = await supabase.auth.signUp({
+        email: values.email.trim().toLowerCase(),
+        password: values.password,
+        options: {
+          data: { full_name: fullName },
+          emailRedirectTo: oauthRedirectTo
+        }
+      });
+
+      if (error) {
+        setAuthError(toFriendlyAuthError(error.message));
+        return;
+      }
+
+      if (!data.session) {
+        setAuthMessage("Account created. Check your email to confirm it, then sign in from the mobile app.");
+        setMode("login");
+        return;
+      }
+
       await ensureMobileWorkspace(data.user);
     } catch (workspaceError) {
-      setAuthError(workspaceError instanceof Error ? workspaceError.message : "Could not prepare your mobile workspace.");
+      setAuthError(toFriendlyNetworkError(workspaceError, "Could not prepare your mobile workspace."));
       return;
+    } finally {
+      setSubmitting(false);
     }
     router.replace("/(tabs)");
   }
@@ -127,17 +129,22 @@ export default function LoginScreen() {
     }
 
     setSubmitting(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: oauthRedirectTo
-    });
-    setSubmitting(false);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: oauthRedirectTo
+      });
 
-    if (error) {
-      setAuthError(toFriendlyAuthError(error.message));
-      return;
+      if (error) {
+        setAuthError(toFriendlyAuthError(error.message));
+        return;
+      }
+
+      setAuthMessage("Password reset sent. Open the link on this phone to choose a new password.");
+    } catch (resetError) {
+      setAuthError(toFriendlyNetworkError(resetError, "Could not send password reset."));
+    } finally {
+      setSubmitting(false);
     }
-
-    setAuthMessage("Password reset sent. Open the link on this phone to choose a new password.");
   }
 
   const isSignup = mode === "signup";

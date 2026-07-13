@@ -76,8 +76,8 @@ export default function VendorsScreen() {
         ) : null}
 
         <View style={styles.list}>
-          {filtered.map((vendor) => (
-            <VendorCard key={vendor.id} vendor={vendor} />
+          {filtered.map((vendor, index) => (
+            <VendorCard key={vendor.id} vendor={vendor} index={index} />
           ))}
           {!loading && filtered.length === 0 ? (
             <Card>
