@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, Image, StyleSheet, TextInput, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
@@ -8,8 +8,9 @@ import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Text } from "@/components/ui/Text";
+import { buildCorrectionRows, getStoredExtraction } from "@/lib/ai/corrections";
 import { getCurrentWorkspace, useComplianceData } from "@/lib/compliance/data";
-import { createDocumentSignedUrl } from "@/lib/documents/mobile-documents";
+import { createDocumentSignedUrl, updateDocumentCompat } from "@/lib/documents/mobile-documents";
 import { toFriendlyNetworkError } from "@/lib/network";
 import { supabase } from "@/lib/supabase/client";
 import { colors } from "@/lib/theme";
@@ -22,6 +23,7 @@ export default function DocumentReviewScreen() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [fields, setFields] = useState({
     documentType: "",
     businessName: "",
@@ -30,6 +32,7 @@ export default function DocumentReviewScreen() {
     expirationDate: "",
     carrier: ""
   });
+  const extraction = useMemo(() => getStoredExtraction(document), [document]);
 
   useEffect(() => {
     if (!document) return;
@@ -67,30 +70,44 @@ export default function DocumentReviewScreen() {
     if (!document || !requirement) return;
     setSaving(true);
     setActionError(null);
+    setActionNotice(null);
 
     try {
       const { user, organization } = await getCurrentWorkspace();
       if (!user || !organization) throw new Error("Sign in again before reviewing documents.");
       const reviewedAt = new Date().toISOString();
+      const corrections = buildCorrectionRows({
+        document,
+        fields,
+        organizationId: organization.id,
+        reviewerId: user.id
+      });
+      let correctionWarning: string | null = null;
 
-      const documentUpdate = await supabase
-        .from("documents")
-        .update({
-          document_type: fields.documentType.trim() || document.document_type,
-          status,
-          business_name: fields.businessName.trim() || null,
-          policy_number: fields.policyNumber.trim() || null,
-          issuing_authority: fields.carrier.trim() || null,
-          issued_at: normalizeDate(fields.effectiveDate),
-          expires_at: normalizeDate(fields.expirationDate),
-          ai_extraction_confirmed_at: status === "approved" ? reviewedAt : null,
-          ai_extraction_confirmed_by: status === "approved" ? user.id : null,
-          ai_extraction_corrected_fields: fields,
-          updated_at: reviewedAt
-        })
-        .eq("id", document.id);
+      if (corrections.length) {
+        const correctionInsert = await supabase.from("document_ai_corrections").insert(corrections);
+        if (correctionInsert.error) {
+          if (isMissingCorrectionsTable(correctionInsert.error)) {
+            correctionWarning = "Correction details could not be added to the report until the AI quality migration is applied.";
+          } else {
+            throw new Error(`Correction logging failed: ${correctionInsert.error.message}`);
+          }
+        }
+      }
 
-      if (documentUpdate.error) throw new Error(documentUpdate.error.message);
+      await updateDocumentCompat(document.id, {
+        document_type: fields.documentType.trim() || document.document_type,
+        status,
+        business_name: fields.businessName.trim() || null,
+        policy_number: fields.policyNumber.trim() || null,
+        issuing_authority: fields.carrier.trim() || null,
+        issued_at: normalizeDate(fields.effectiveDate),
+        expires_at: normalizeDate(fields.expirationDate),
+        ai_extraction_confirmed_at: status === "approved" ? reviewedAt : null,
+        ai_extraction_confirmed_by: status === "approved" ? user.id : null,
+        ai_extraction_corrected_fields: { fields, corrections },
+        updated_at: reviewedAt
+      });
 
       const requirementUpdate = await supabase
         .from("vendor_requirements")
@@ -116,6 +133,9 @@ export default function DocumentReviewScreen() {
       if (reviewInsert.error) throw new Error(reviewInsert.error.message);
 
       await reload(true);
+      setActionNotice(
+        `${status === "approved" ? "Document approved" : "Resubmission requested"}.${correctionWarning ? ` ${correctionWarning}` : corrections.length ? ` Logged ${corrections.length} AI correction${corrections.length === 1 ? "" : "s"}.` : " No AI fields were changed."}`
+      );
     } catch (reviewError) {
       setActionError(toFriendlyNetworkError(reviewError, "Could not save review."));
     } finally {
@@ -171,13 +191,44 @@ export default function DocumentReviewScreen() {
             </View>
             <StatusBadge status={document.status === "approved" ? "compliant" : "under_review"} />
           </View>
-          <FieldInput label="Document Type" value={fields.documentType} onChangeText={(documentType) => setFields((current) => ({ ...current, documentType }))} />
-          <FieldInput label="Insured / Business Name" value={fields.businessName} onChangeText={(businessName) => setFields((current) => ({ ...current, businessName }))} />
-          <FieldInput label="Policy / License Number" value={fields.policyNumber} onChangeText={(policyNumber) => setFields((current) => ({ ...current, policyNumber }))} />
-          <FieldInput label="Effective Date" value={fields.effectiveDate} onChangeText={(effectiveDate) => setFields((current) => ({ ...current, effectiveDate }))} />
-          <FieldInput label="Expiration Date" value={fields.expirationDate} onChangeText={(expirationDate) => setFields((current) => ({ ...current, expirationDate }))} />
-          <FieldInput label="Carrier / Authority" value={fields.carrier} onChangeText={(carrier) => setFields((current) => ({ ...current, carrier }))} />
+          {extraction ? (
+            <Text variant="muted">
+              {extraction.model ?? "AI model"} - {Math.round((extraction.confidence ?? 0) * 100)}% aggregate confidence
+            </Text>
+          ) : null}
+          {extraction?.validationWarnings.length ? (
+            <View style={styles.warningBox}>
+              <Text variant="title">Manual review required</Text>
+              {extraction.validationWarnings.map((warning) => (
+                <Text key={warning} className="text-expiring">{formatWarning(warning)}</Text>
+              ))}
+            </View>
+          ) : null}
+          <FieldInput label="Document Type" confidence={extraction?.documentTypeConfidence} value={fields.documentType} onChangeText={(documentType) => setFields((current) => ({ ...current, documentType }))} />
+          <FieldInput label="Insured / Business Name" confidence={extraction?.fieldConfidence.businessName} value={fields.businessName} onChangeText={(businessName) => setFields((current) => ({ ...current, businessName }))} />
+          <FieldInput label="Policy / License Number" confidence={extraction?.fieldConfidence.policyOrLicenseNumber} value={fields.policyNumber} onChangeText={(policyNumber) => setFields((current) => ({ ...current, policyNumber }))} />
+          <FieldInput label="Effective Date" confidence={extraction?.fieldConfidence.effectiveDate} value={fields.effectiveDate} onChangeText={(effectiveDate) => setFields((current) => ({ ...current, effectiveDate }))} />
+          <FieldInput label="Expiration Date" confidence={extraction?.fieldConfidence.expirationDate} value={fields.expirationDate} onChangeText={(expirationDate) => setFields((current) => ({ ...current, expirationDate }))} />
+          <FieldInput label="Carrier / Authority" confidence={extraction?.fieldConfidence.issuingCarrierOrAuthority} value={fields.carrier} onChangeText={(carrier) => setFields((current) => ({ ...current, carrier }))} />
           {document.ai_extraction_error ? <Text className="text-expiring">AI extraction note: {document.ai_extraction_error}</Text> : null}
+          </Card>
+        ) : null}
+
+        {extraction?.coverageLines.length ? (
+          <Card>
+            <Text variant="title">COI Coverage Lines</Text>
+            <Text variant="muted">The primary expiration above must be the earliest date shown here.</Text>
+            {extraction.coverageLines.map((line, index) => (
+              <View key={`${line.coverageType ?? "coverage"}-${index}`} style={styles.coverageRow}>
+                <View style={styles.cardHeader}>
+                  <Text variant="title">{line.coverageType ?? "Unlabeled coverage"}</Text>
+                  <Text variant="muted">{line.confidence} confidence</Text>
+                </View>
+                <Text variant="muted">Policy: {line.policyNumber ?? "Not captured"}</Text>
+                <Text variant="muted">Effective: {line.effectiveDate ?? "Not captured"} | Expires: {line.expirationDate ?? "Not captured"}</Text>
+                <Text variant="muted">Carrier: {line.carrier ?? "Not captured"}</Text>
+              </View>
+            ))}
           </Card>
         ) : null}
 
@@ -200,6 +251,11 @@ export default function DocumentReviewScreen() {
               <Text className="text-missing">{actionError}</Text>
             </View>
           ) : null}
+          {actionNotice ? (
+            <View style={styles.noticeBox}>
+              <Text>{actionNotice}</Text>
+            </View>
+          ) : null}
           <Button disabled={saving} onPress={() => saveReview("approved")}>
             {saving ? "Saving..." : "Approve Document"}
           </Button>
@@ -214,10 +270,13 @@ export default function DocumentReviewScreen() {
   );
 }
 
-function FieldInput({ label, value, onChangeText }: { label: string; value: string; onChangeText: (value: string) => void }) {
+function FieldInput({ label, confidence, value, onChangeText }: { label: string; confidence?: "high" | "medium" | "low"; value: string; onChangeText: (value: string) => void }) {
   return (
     <View style={styles.fieldBox}>
-      <Text variant="label">{label}</Text>
+      <View style={styles.fieldLabelRow}>
+        <Text variant="label">{label}</Text>
+        {confidence ? <Text variant="muted">{confidence} confidence</Text> : null}
+      </View>
       <TextInput
         placeholder="Not captured"
         placeholderTextColor={colors.muted}
@@ -227,6 +286,14 @@ function FieldInput({ label, value, onChangeText }: { label: string; value: stri
       />
     </View>
   );
+}
+
+function isMissingCorrectionsTable(error: { code?: string; message?: string }) {
+  return error.code === "42P01" || error.code === "PGRST205" || /document_ai_corrections|schema cache|does not exist/i.test(error.message ?? "");
+}
+
+function formatWarning(warning: string) {
+  return warning.replace(/[_:]/g, " ").replace(/\s+/g, " ").replace(/^./, (letter) => letter.toUpperCase());
 }
 
 function normalizeDate(value: string) {
@@ -273,6 +340,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.input,
     padding: 12
   },
+  fieldLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12
+  },
   input: {
     minHeight: 40,
     color: colors.foreground,
@@ -298,6 +371,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(253, 164, 175, 0.3)",
     backgroundColor: "rgba(253, 164, 175, 0.08)",
+    padding: 12
+  },
+  warningBox: {
+    gap: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(251, 191, 36, 0.35)",
+    backgroundColor: "rgba(251, 191, 36, 0.08)",
+    padding: 12
+  },
+  coverageRow: {
+    gap: 4,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingTop: 12
+  },
+  noticeBox: {
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "rgba(34, 242, 210, 0.28)",
+    backgroundColor: "rgba(34, 242, 210, 0.08)",
     padding: 12
   }
 });

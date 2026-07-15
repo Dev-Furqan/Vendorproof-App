@@ -5,10 +5,13 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
+    "api": "tsx server/extraction-api.ts",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
+    "test:ai": "tsx --test tests/ai-pipeline.test.ts",
+    "benchmark:ai": "tsx scripts/benchmark-extraction.ts",
     "seed:demo": "node scripts/seed-demo.js"
   },
   "dependencies": {
@@ -22,7 +25,10 @@
     "expo-camera": "latest",
     "expo-constants": "latest",
     "expo-device": "latest",
+    "expo-document-picker": "~57.0.0",
+    "expo-file-system": "~57.0.0",
     "expo-font": "latest",
+    "expo-image-manipulator": "~57.0.2",
     "expo-image-picker": "latest",
     "expo-linking": "latest",
     "expo-notifications": "latest",
@@ -31,6 +37,7 @@
     "expo-splash-screen": "latest",
     "expo-status-bar": "latest",
     "expo-web-browser": "~57.0.0",
+    "jpeg-js": "^0.4.4",
     "nativewind": "latest",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -48,7 +55,10 @@
     "zod": "latest"
   },
   "devDependencies": {
+    "@types/node": "^26.1.1",
     "@types/react": "latest",
+    "sharp": "^0.35.3",
+    "tsx": "^4.23.1",
     "typescript": "latest"
   }
 }

@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions } from "expo-camera";
+import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useMemo, useRef, useState } from "react";
@@ -11,14 +12,12 @@ import { Button } from "@/components/ui/Button";
 import { Text } from "@/components/ui/Text";
 import { useComplianceData } from "@/lib/compliance/data";
 import { uploadCapturedDocument, type UploadStep } from "@/lib/documents/mobile-documents";
+import type { DocumentSource } from "@/lib/documents/preprocess";
 import { toFriendlyNetworkError } from "@/lib/network";
 import { colors } from "@/lib/theme";
 import type { VendorRequirementRecord } from "@/types/compliance";
 
-type CapturedAsset = {
-  uri: string;
-  base64: string | null;
-};
+type CapturedAsset = DocumentSource;
 
 const documentTypes = [
   { label: "COI", value: "coi" },
@@ -28,6 +27,7 @@ const documentTypes = [
 
 const stepLabels: Record<UploadStep, string> = {
   preparing: "Preparing image",
+  preprocessing: "Correcting crop, lighting, and resolution",
   uploading: "Uploading to secure storage",
   creating_record: "Creating document record",
   extracting: "Extracting fields with AI",
@@ -82,7 +82,14 @@ export default function CaptureScreen() {
     try {
       const photo = await cameraRef.current.takePictureAsync({ quality: 0.88, base64: true, skipProcessing: false });
       if (!photo?.uri) throw new Error("The camera did not return a usable image.");
-      setCaptured({ uri: photo.uri, base64: photo.base64 ?? null });
+      setCaptured({
+        uri: photo.uri,
+        base64: photo.base64 ?? null,
+        mimeType: "image/jpeg",
+        fileName: `camera-document-${Date.now()}.jpg`,
+        width: photo.width,
+        height: photo.height
+      });
     } catch (captureError) {
       setError(captureError instanceof Error ? captureError.message : "Camera capture failed. Try again or choose a photo.");
     } finally {
@@ -119,9 +126,43 @@ export default function CaptureScreen() {
         setError("The selected image could not be opened. Try a different photo.");
         return;
       }
-      setCaptured({ uri: asset.uri, base64: asset.base64 ?? null });
+      setCaptured({
+        uri: asset.uri,
+        base64: asset.base64 ?? null,
+        mimeType: asset.mimeType ?? "image/jpeg",
+        fileName: asset.fileName ?? `photo-document-${Date.now()}.jpg`,
+        width: asset.width,
+        height: asset.height
+      });
     } catch (pickerError) {
       setError(toFriendlyNetworkError(pickerError, "Could not open the photo library."));
+    }
+  }
+
+  async function pickPdf() {
+    setError(null);
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "application/pdf",
+        copyToCacheDirectory: true,
+        multiple: false
+      });
+      if (result.canceled) return;
+      const asset = result.assets[0];
+      if (!asset?.uri) {
+        setError("The selected PDF could not be opened. Try a different file.");
+        return;
+      }
+      setCaptured({
+        uri: asset.uri,
+        base64: null,
+        mimeType: "application/pdf",
+        fileName: asset.name || `vendor-document-${Date.now()}.pdf`,
+        width: null,
+        height: null
+      });
+    } catch (pickerError) {
+      setError(toFriendlyNetworkError(pickerError, "Could not open the document picker."));
     }
   }
 
@@ -140,8 +181,7 @@ export default function CaptureScreen() {
 
     try {
       const result = await uploadCapturedDocument({
-        imageUri: captured.uri,
-        imageBase64: captured.base64,
+        source: captured,
         documentType,
         requirement: selectedRequirement,
         onStep: setUploadStep
@@ -173,6 +213,9 @@ export default function CaptureScreen() {
           <Button variant="secondary" onPress={pickFromGallery}>
             Choose From Photos
           </Button>
+          <Button variant="secondary" onPress={pickPdf}>
+            Choose PDF
+          </Button>
           <Button variant="ghost" onPress={() => router.back()}>
             Cancel
           </Button>
@@ -195,7 +238,15 @@ export default function CaptureScreen() {
             </Button>
           </View>
 
-          <Image source={{ uri: captured.uri }} style={styles.previewImage} resizeMode="contain" />
+          {captured.mimeType === "application/pdf" ? (
+            <View style={styles.pdfPreview}>
+              <MaterialCommunityIcons name="file-pdf-box" size={52} color={colors.accent} />
+              <Text variant="title">{captured.fileName}</Text>
+              <Text variant="muted">PDF pages will be rendered and OCR-processed securely before extraction.</Text>
+            </View>
+          ) : (
+            <Image source={{ uri: captured.uri }} style={styles.previewImage} resizeMode="contain" />
+          )}
 
           <View style={styles.panel}>
             <Text variant="title">Document Type</Text>
@@ -257,6 +308,9 @@ export default function CaptureScreen() {
           <Button variant="secondary" disabled={busy} onPress={pickFromGallery}>
             Choose Different Photo
           </Button>
+          <Button variant="secondary" disabled={busy} onPress={pickPdf}>
+            Choose PDF
+          </Button>
         </ScrollView>
       </View>
     );
@@ -298,7 +352,9 @@ export default function CaptureScreen() {
                 {capturing ? <ActivityIndicator color={colors.accentForeground} /> : <View style={styles.shutterInner} />}
               </Animated.View>
             </Pressable>
-            <View style={styles.spacerButton} />
+            <AnimatedPressable style={styles.galleryButton} disabled={capturing} onPress={pickPdf}>
+              <MaterialCommunityIcons name="file-pdf-box" size={24} color={colors.foreground} />
+            </AnimatedPressable>
           </View>
         </View>
       </View>
@@ -500,6 +556,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.input
+  },
+  pdfPreview: {
+    minHeight: 240,
+    gap: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.input,
+    padding: 20
   },
   panel: {
     gap: 10,
