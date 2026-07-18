@@ -24,7 +24,20 @@ export const coverageLineSchema = z.object({
   expirationDate: z.string().nullable(),
   carrier: z.string().nullable(),
   confidence: confidenceLevelSchema
-});
+}).strict();
+
+const modelExtractionSchema = z.object({
+  documentType: documentTypeSchema,
+  documentTypeConfidence: confidenceLevelSchema,
+  businessName: z.string().nullable(),
+  policyOrLicenseNumber: z.string().nullable(),
+  effectiveDate: z.string().nullable(),
+  expirationDate: z.string().nullable(),
+  issuingCarrierOrAuthority: z.string().nullable(),
+  fieldConfidence: fieldConfidenceSchema.strict(),
+  coverageLines: z.array(coverageLineSchema),
+  flags: z.array(z.string())
+}).strict();
 
 export const extractionResultSchema = z.object({
   documentType: documentTypeSchema,
@@ -60,6 +73,20 @@ export type ExtractionInput = {
 type ExtractOptions = {
   accessToken?: string;
   model?: string;
+};
+
+export type OpenRouterDiagnostic = {
+  requestId: string | null;
+  status: number;
+  model: string;
+  selectedDocumentType: string;
+  fileName: string;
+  finishReason: string | null;
+  payload: unknown;
+};
+
+type DirectExtractOptions = {
+  onDiagnostic?: (diagnostic: OpenRouterDiagnostic) => void;
 };
 
 const MODEL_RESPONSE_JSON_SCHEMA = {
@@ -164,9 +191,14 @@ export async function extractDocumentFieldsFromImage(imageBase64: string, model?
   );
 }
 
-export async function extractDocumentFieldsDirect(input: ExtractionInput, model = DEFAULT_EXTRACTION_MODEL) {
+export async function extractDocumentFieldsDirect(
+  input: ExtractionInput,
+  model = DEFAULT_EXTRACTION_MODEL,
+  options: DirectExtractOptions = {}
+) {
   const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) return emptyExtraction(input, model, ["openrouter_api_key_missing"]);
+  if (!apiKey) throw new Error("OpenRouter is not configured. Set OPENROUTER_API_KEY on the VendorProof extraction server.");
+  validateExtractionInput(input);
 
   const isPdf = input.mimeType === "application/pdf";
   const content = isPdf
@@ -220,13 +252,29 @@ export async function extractDocumentFieldsDirect(input: ExtractionInput, model 
         provider: { require_parameters: true },
         plugins,
         temperature: 0,
-        max_tokens: 1600
+        reasoning: { effort: "minimal", exclude: true },
+        max_tokens: 1400
       })
     },
     60000
   );
 
   const payload = await response.json().catch(() => ({}));
+  const diagnostic = {
+    requestId: response.headers.get("x-request-id"),
+    status: response.status,
+    model: isRecord(payload) && typeof payload.model === "string" ? payload.model : model,
+    selectedDocumentType: normalizeDocumentType(input.selectedDocumentType),
+    fileName: input.fileName,
+    finishReason: isRecord(payload) && Array.isArray(payload.choices) && isRecord(payload.choices[0])
+      ? nullableText(payload.choices[0].finish_reason)
+      : null,
+    payload
+  } satisfies OpenRouterDiagnostic;
+  options.onDiagnostic?.(diagnostic);
+  if (process.env.OPENROUTER_LOG_RAW_RESPONSE === "true") {
+    console.info("[VendorProof OpenRouter raw response]", JSON.stringify(diagnostic));
+  }
   if (!response.ok) {
     const providerMessage = getProviderError(payload);
     throw new Error(`OpenRouter extraction failed (${response.status})${providerMessage ? `: ${providerMessage}` : ""}`);
@@ -234,6 +282,10 @@ export async function extractDocumentFieldsDirect(input: ExtractionInput, model 
 
   const rawContent = payload.choices?.[0]?.message?.content ?? "{}";
   const parsed = parseExtractionContent(typeof rawContent === "string" ? rawContent : JSON.stringify(rawContent));
+  if (parsed.flags.some((flag) => flag === "malformed_ai_json" || flag === "invalid_ai_schema")) {
+    const finishReason = diagnostic.finishReason ? ` Provider finish reason: ${diagnostic.finishReason}.` : "";
+    throw new Error(`OpenRouter returned malformed or truncated JSON.${finishReason}`);
+  }
   return finalizeExtraction(parsed, input, payload.model ?? model, payload.usage ?? null);
 }
 
@@ -277,10 +329,10 @@ export function parseExtractionContent(content: string) {
     .replace(/\s*```$/i, "")
     .trim();
   const direct = safeJsonParse(stripped);
-  if (direct) return normalizeExtraction(direct);
-  const objectMatch = stripped.match(/\{[\s\S]*\}/);
-  const matched = objectMatch ? safeJsonParse(objectMatch[0]) : null;
-  return matched ? normalizeExtraction(matched) : emptyModelExtraction(["malformed_ai_json"]);
+  const candidate = direct ?? safeJsonParse(extractFirstJsonObject(stripped) ?? "");
+  if (!candidate) return emptyModelExtraction(["malformed_ai_json"]);
+  const validated = modelExtractionSchema.safeParse(candidate);
+  return validated.success ? normalizeExtraction(validated.data) : emptyModelExtraction(["invalid_ai_schema"]);
 }
 
 export function validateExtraction(result: ReturnType<typeof normalizeExtraction>, selectedDocumentType: string, now = new Date()) {
@@ -339,6 +391,7 @@ function finalizeExtraction(
   if (input.mimeType !== "application/pdf" && outputWidth && outputHeight && Math.max(outputWidth, outputHeight) < 1200) {
     qualityFlags.push("low_input_resolution");
   }
+  qualityFlags.push(...(input.preprocessing?.qualityWarnings ?? []));
   const withQuality = { ...normalized, flags: [...new Set([...normalized.flags, ...qualityFlags])] };
   const validationWarnings = validateExtraction(withQuality, input.selectedDocumentType);
   return extractionResultSchema.parse({
@@ -395,6 +448,17 @@ function emptyModelExtraction(flags: string[]) {
 
 function emptyExtraction(input: ExtractionInput, model: string, flags: string[]) {
   return finalizeExtraction(emptyModelExtraction(flags), input, model, null);
+}
+
+function validateExtractionInput(input: ExtractionInput) {
+  if (!input.fileBase64.trim()) throw new Error("The document image is empty. Capture or choose the file again.");
+  if (!["image/jpeg", "image/png", "application/pdf"].includes(input.mimeType)) {
+    throw new Error(`Unsupported document MIME type: ${input.mimeType}`);
+  }
+  const compact = input.fileBase64.replace(/\s/g, "");
+  if (compact.length < 16 || !/^[A-Za-z0-9+/]*={0,2}$/.test(compact)) {
+    throw new Error("The document was not encoded as valid base64.");
+  }
 }
 
 function calculateConfidence(result: ReturnType<typeof normalizeExtraction>) {
@@ -457,4 +521,28 @@ function safeJsonParse(value: string) {
   } catch {
     return null;
   }
+}
+
+function extractFirstJsonObject(value: string) {
+  const start = value.indexOf("{");
+  if (start < 0) return null;
+  let depth = 0;
+  let quoted = false;
+  let escaped = false;
+  for (let index = start; index < value.length; index += 1) {
+    const character = value[index];
+    if (quoted) {
+      if (escaped) escaped = false;
+      else if (character === "\\") escaped = true;
+      else if (character === '"') quoted = false;
+      continue;
+    }
+    if (character === '"') quoted = true;
+    else if (character === "{") depth += 1;
+    else if (character === "}") {
+      depth -= 1;
+      if (depth === 0) return value.slice(start, index + 1);
+    }
+  }
+  return null;
 }

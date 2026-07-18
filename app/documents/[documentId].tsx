@@ -37,7 +37,7 @@ export default function DocumentReviewScreen() {
   useEffect(() => {
     if (!document) return;
     setFields({
-      documentType: document.document_type ?? document.ai_extracted_document_type ?? "",
+      documentType: document.ai_extracted_document_type ?? document.document_type ?? "",
       businessName: document.business_name ?? document.ai_extracted_business_name ?? "",
       policyNumber: document.policy_number ?? document.ai_extracted_policy_number ?? "",
       effectiveDate: document.issued_at ?? document.ai_extracted_effective_date ?? "",

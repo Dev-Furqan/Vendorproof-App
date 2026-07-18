@@ -4,6 +4,8 @@ import { supabase, realtimeTables } from "@/lib/supabase/client";
 import { toFriendlyNetworkError, withTimeout } from "@/lib/network";
 import {
   documentSelectBase,
+  documentSelectWithAi,
+  isMissingColumnError,
   requirementSelectBase,
   withDocumentDefaults,
   withRequirementDefaults
@@ -88,7 +90,7 @@ export async function loadComplianceData(): Promise<ComplianceData> {
       .eq("organization_id", organization.id)
       .order("name", { ascending: true }),
     supabase.from("vendor_requirements").select(requirementSelectBase).eq("organization_id", organization.id),
-    supabase.from("documents").select(documentSelectBase).eq("organization_id", organization.id)
+    loadDocuments(organization.id)
   ]);
 
   const baseError = propertiesResult.error ?? vendorsResult.error ?? requirementsResult.error ?? documentsResult.error;
@@ -128,6 +130,13 @@ export async function loadComplianceData(): Promise<ComplianceData> {
   const propertyRows = buildPropertyComplianceRows({ vendorRows, properties });
 
   return { organization, properties, vendors, requirements, vendorRows, propertyRows };
+}
+
+async function loadDocuments(organizationId: string) {
+  const withAi = await supabase.from("documents").select(documentSelectWithAi).eq("organization_id", organizationId);
+  if (!withAi.error) return withAi;
+  if (!isMissingColumnError(withAi.error)) return withAi;
+  return supabase.from("documents").select(documentSelectBase).eq("organization_id", organizationId);
 }
 
 export function useComplianceData() {

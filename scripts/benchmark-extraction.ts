@@ -59,6 +59,7 @@ const models = (process.env.BENCHMARK_MODELS ?? "google/gemini-3.5-flash,anthrop
   .map((model) => model.trim())
   .filter(Boolean);
 const downloaded = new Map<string, Buffer>();
+const rawDiagnostics: Array<Record<string, unknown>> = [];
 
 main().catch((error) => {
   console.error(error);
@@ -83,7 +84,12 @@ for (const model of models) {
           selectedDocumentType: fixture.selectedDocumentType,
           preprocessing: metadata(prepared, source.byteLength)
         },
-        model
+        model,
+        {
+          onDiagnostic: (diagnostic) => {
+            if (model === models[0]) rawDiagnostics.push({ fixture: fixture.id, ...diagnostic });
+          }
+        }
       );
       modelRows.push({
         model,
@@ -113,7 +119,8 @@ const summaries = models.map((model) => {
 const winner = [...summaries].sort((a, b) => b.averageAccuracy - a.averageAccuracy || a.elapsedMs - b.elapsedMs)[0]?.model ?? models[0];
 
 const resolutionRows: Array<Record<string, any>> = [];
-for (const longEdge of [900, 1400, 2000]) {
+const resolutionEdges = process.env.BENCHMARK_SKIP_RESOLUTION === "true" ? [] : [900, 1400, 2000];
+for (const longEdge of resolutionEdges) {
   for (const fixture of fixtures.filter((item) => item.id !== "w9_completed")) {
     const source = await download(fixture.url);
     const prepared = await prepareImage(source, longEdge, true);
@@ -144,7 +151,7 @@ for (const longEdge of [900, 1400, 2000]) {
   }
 }
 
-const resolutionSummaries = [900, 1400, 2000].map((longEdge) => {
+const resolutionSummaries = resolutionEdges.map((longEdge) => {
   const rows = resolutionRows.filter((row) => row.longEdge === longEdge);
   return {
     longEdge,
@@ -154,7 +161,7 @@ const resolutionSummaries = [900, 1400, 2000].map((longEdge) => {
   };
 });
 
-console.log(JSON.stringify({ generatedAt: new Date().toISOString(), fixtures: fixtures.map(({ id, url }) => ({ id, source: url })), modelRows, summaries, winner, resolutionRows, resolutionSummaries }, null, 2));
+console.log(JSON.stringify({ generatedAt: new Date().toISOString(), fixtures: fixtures.map(({ id, url }) => ({ id, source: url })), rawDiagnostics, modelRows, summaries, winner, resolutionRows, resolutionSummaries }, null, 2));
 }
 
 async function download(url: string) {

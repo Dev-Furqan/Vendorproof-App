@@ -25,6 +25,43 @@ export type UploadResult = {
   extractionError: string | null;
 };
 
+export async function createManualReviewDocument({
+  documentType,
+  requirement,
+  reason = "Document capture or automated extraction was skipped."
+}: {
+  documentType: string;
+  requirement: VendorRequirementRecord;
+  reason?: string;
+}) {
+  const {
+    data: { session },
+    error: sessionError
+  } = await supabase.auth.getSession();
+  if (sessionError) throw new Error(sessionError.message);
+  if (!session?.user) throw new Error("Sign in again before creating a manual review.");
+  const { organization } = await getCurrentWorkspace();
+  if (!organization?.id) throw new Error("Your account is not connected to an organization.");
+
+  const documentId = createUuid();
+  const timestamp = new Date().toISOString();
+  await insertDocumentCompat({
+    id: documentId,
+    organization_id: organization.id,
+    vendor_id: requirement.vendor_id,
+    property_id: requirement.property_id,
+    vendor_requirement_id: requirement.id,
+    document_type: documentType,
+    status: "pending_review",
+    ai_extraction_status: "manual_entry",
+    ai_extraction_error: reason,
+    ai_extraction_flags: ["manual_entry", "needs_manual_review"],
+    created_at: timestamp,
+    updated_at: timestamp
+  });
+  return documentId;
+}
+
 export async function uploadCapturedDocument({ source, documentType, requirement, onStep }: CapturedDocumentUpload): Promise<UploadResult> {
   onStep?.("preparing");
   const {
@@ -38,8 +75,10 @@ export async function uploadCapturedDocument({ source, documentType, requirement
   if (!organization?.id) throw new Error("Your account is not connected to an organization.");
 
   onStep?.("preprocessing");
-  const processed = await preprocessDocument(source);
-  const fileBytes = processed.base64 ? base64ToArrayBuffer(processed.base64) : await fetchFileBytes(processed.uri);
+  const processed = await runPipelineStage("Image preprocessing", () => preprocessDocument(source));
+  const fileBytes = await runPipelineStage("Document reading", () =>
+    processed.base64 ? Promise.resolve(base64ToArrayBuffer(processed.base64)) : fetchFileBytes(processed.uri)
+  );
   const fileBase64 = processed.base64 ?? bytesToBase64(new Uint8Array(fileBytes));
   const documentId = createUuid();
   const timestamp = new Date().toISOString();
@@ -52,7 +91,13 @@ export async function uploadCapturedDocument({ source, documentType, requirement
     contentType: processed.mimeType,
     upsert: false
   });
-  if (uploadResult.error) throw new Error(`Upload failed: ${uploadResult.error.message}`);
+  if (uploadResult.error) throw new Error(`Storage upload failed: ${uploadResult.error.message}`);
+  try {
+    await verifyStoredUpload(storagePath, fileBytes.byteLength);
+  } catch (error) {
+    await supabase.storage.from(DOCUMENT_STORAGE_BUCKET).remove([storagePath]).catch(() => undefined);
+    throw error;
+  }
 
   try {
     onStep?.("creating_record");
@@ -103,23 +148,7 @@ export async function uploadCapturedDocument({ source, documentType, requirement
       { accessToken: session.access_token }
     );
     onStep?.("saving_extraction");
-    await updateDocumentCompat(documentId, {
-      ai_extraction_status: "completed",
-      ai_extraction_model: extraction.model,
-      ai_extraction_raw: extraction,
-      ai_extraction_confidence: extraction.confidence,
-      ai_extraction_flags: [...new Set([...extraction.flags, ...extraction.validationWarnings])],
-      ai_extraction_usage: extraction.usage,
-      ai_extraction_error: null,
-      ai_extraction_completed_at: new Date().toISOString(),
-      ai_extracted_document_type: extraction.documentType === "unknown" ? null : extraction.documentType,
-      ai_extracted_business_name: extraction.businessName,
-      ai_extracted_policy_number: extraction.policyOrLicenseNumber,
-      ai_extracted_effective_date: extraction.effectiveDate,
-      ai_extracted_expiration_date: extraction.expirationDate,
-      ai_extracted_issuing_authority: extraction.issuingCarrierOrAuthority,
-      updated_at: new Date().toISOString()
-    });
+    await saveExtraction(documentId, extraction);
     onStep?.("success");
     return { documentId, extraction, extractionError: null };
   } catch (error) {
@@ -130,6 +159,55 @@ export async function uploadCapturedDocument({ source, documentType, requirement
       ai_extraction_flags: ["ai_extraction_failed", "needs_manual_review"],
       updated_at: new Date().toISOString()
     }).catch(() => undefined);
+    onStep?.("success");
+    return { documentId, extraction: null, extractionError: message };
+  }
+}
+
+export async function retryCapturedDocumentExtraction({
+  documentId,
+  source,
+  documentType,
+  onStep
+}: {
+  documentId: string;
+  source: DocumentSource;
+  documentType: string;
+  onStep?: (step: UploadStep) => void;
+}): Promise<UploadResult> {
+  onStep?.("preprocessing");
+  const {
+    data: { session },
+    error: sessionError
+  } = await supabase.auth.getSession();
+  if (sessionError) throw new Error(sessionError.message);
+  if (!session?.user) throw new Error("Sign in again before retrying extraction.");
+
+  const processed = await runPipelineStage("Image preprocessing", () => preprocessDocument(source));
+  const fileBytes = await runPipelineStage("Document reading", () =>
+    processed.base64 ? Promise.resolve(base64ToArrayBuffer(processed.base64)) : fetchFileBytes(processed.uri)
+  );
+  const fileBase64 = processed.base64 ?? bytesToBase64(new Uint8Array(fileBytes));
+
+  onStep?.("extracting");
+  try {
+    const extraction = await extractDocumentFields(
+      {
+        fileBase64,
+        mimeType: processed.mimeType,
+        fileName: processed.fileName,
+        selectedDocumentType: documentType,
+        preprocessing: processed.preprocessing
+      },
+      { accessToken: session.access_token }
+    );
+    onStep?.("saving_extraction");
+    await saveExtraction(documentId, extraction);
+    onStep?.("success");
+    return { documentId, extraction, extractionError: null };
+  } catch (error) {
+    const message = toFriendlyNetworkError(error, "AI extraction failed.");
+    await markExtractionFailed(documentId, message);
     onStep?.("success");
     return { documentId, extraction: null, extractionError: message };
   }
@@ -165,6 +243,68 @@ export async function updateDocumentCompat(documentId: string, row: Record<strin
     delete payload[missingColumn];
   }
   throw new Error("Document update failed after schema compatibility retries.");
+}
+
+async function saveExtraction(documentId: string, extraction: ExtractionResult) {
+  const needsManualReview = extraction.reviewStatus === "needs_manual_review";
+  await updateDocumentCompat(documentId, {
+    ai_extraction_status: needsManualReview ? "needs_manual_review" : "completed",
+    ai_extraction_model: extraction.model,
+    ai_extraction_raw: extraction,
+    ai_extraction_confidence: extraction.confidence,
+    ai_extraction_flags: [
+      ...new Set([
+        ...extraction.flags,
+        ...extraction.validationWarnings,
+        ...(needsManualReview ? ["needs_manual_review"] : [])
+      ])
+    ],
+    ai_extraction_usage: extraction.usage,
+    ai_extraction_error: null,
+    ai_extraction_completed_at: new Date().toISOString(),
+    ai_extracted_document_type: extraction.documentType === "unknown" ? null : extraction.documentType,
+    ai_extracted_business_name: extraction.businessName,
+    ai_extracted_policy_number: extraction.policyOrLicenseNumber,
+    ai_extracted_effective_date: extraction.effectiveDate,
+    ai_extracted_expiration_date: extraction.expirationDate,
+    ai_extracted_issuing_authority: extraction.issuingCarrierOrAuthority,
+    updated_at: new Date().toISOString()
+  });
+}
+
+async function markExtractionFailed(documentId: string, message: string) {
+  await updateDocumentCompat(documentId, {
+    ai_extraction_status: "failed",
+    ai_extraction_error: message,
+    ai_extraction_flags: ["ai_extraction_failed", "needs_manual_review"],
+    updated_at: new Date().toISOString()
+  }).catch(() => undefined);
+}
+
+async function verifyStoredUpload(storagePath: string, expectedBytes: number) {
+  const slash = storagePath.lastIndexOf("/");
+  const folder = storagePath.slice(0, slash);
+  const fileName = storagePath.slice(slash + 1);
+  const { data, error } = await supabase.storage.from(DOCUMENT_STORAGE_BUCKET).list(folder, {
+    limit: 10,
+    search: fileName
+  });
+  if (error) throw new Error(`Storage verification failed: ${error.message}`);
+  const stored = data?.find((entry) => entry.name === fileName);
+  if (!stored) throw new Error("Storage verification failed: the uploaded file could not be read back.");
+  const storedBytes = Number(stored.metadata?.size);
+  if (Number.isFinite(storedBytes) && storedBytes !== expectedBytes) {
+    throw new Error(`Storage verification failed: expected ${expectedBytes} bytes but storage reports ${storedBytes}.`);
+  }
+}
+
+async function runPipelineStage<T>(stage: string, operation: () => Promise<T>) {
+  try {
+    return await operation();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error.";
+    throw new Error(`${stage} failed: ${message}`);
+  }
 }
 
 function getMissingColumn(error: { message?: string; code?: string }) {

@@ -49,10 +49,22 @@ test("parses fenced JSON into the normalized extraction shape", () => {
   assert.equal(result.expirationDate, "2026-06-01");
 });
 
+test("parses JSON surrounded by provider prose without swallowing later braces", () => {
+  const result = parseExtractionContent(`Extraction follows:\n${JSON.stringify(completeCoi)}\nConfidence notes: {not JSON}`);
+  assert.equal(result.documentType, "coi");
+  assert.equal(result.businessName, "Apex Fire Protection LLC");
+});
+
 test("malformed model output becomes a manual-review result instead of throwing", () => {
   const result = parseExtractionContent("I could not read this page");
   assert.equal(result.documentType, "unknown");
   assert.deepEqual(result.flags, ["malformed_ai_json"]);
+});
+
+test("schema-invalid model JSON is rejected before any field is trusted", () => {
+  const result = parseExtractionContent(JSON.stringify({ documentType: "coi", businessName: "Plausible but incomplete" }));
+  assert.equal(result.documentType, "unknown");
+  assert.deepEqual(result.flags, ["invalid_ai_schema"]);
 });
 
 test("validation catches impossible, stale, distant, missing, and mismatched values", () => {

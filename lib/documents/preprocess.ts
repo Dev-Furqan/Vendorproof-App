@@ -19,6 +19,7 @@ export type PreprocessingMetadata = {
   inputBytes: number | null;
   outputBytes: number | null;
   crop: { x: number; y: number; width: number; height: number } | null;
+  qualityWarnings?: string[];
 };
 
 export type DocumentSource = {
@@ -51,7 +52,8 @@ export async function preprocessDocument(source: DocumentSource): Promise<Prepro
         outputHeight: null,
         inputBytes: null,
         outputBytes: null,
-        crop: null
+        crop: null,
+        qualityWarnings: []
       }
     };
   }
@@ -86,6 +88,7 @@ export async function preprocessDocument(source: DocumentSource): Promise<Prepro
   });
   const detectedCrop = detectDocumentCrop(decoded.data, decoded.width, decoded.height);
   const cropped = detectedCrop ? cropRgba(decoded.data, decoded.width, detectedCrop) : { data: decoded.data, width: decoded.width, height: decoded.height };
+  const qualityWarnings = assessImageQuality(cropped.data, cropped.width, cropped.height);
   const contrastNormalized = normalizeContrast(cropped.data);
   const encoded = encode({ data: cropped.data, width: cropped.width, height: cropped.height }, JPEG_QUALITY);
   const base64 = bytesToBase64(encoded.data);
@@ -108,9 +111,47 @@ export async function preprocessDocument(source: DocumentSource): Promise<Prepro
       outputHeight: cropped.height,
       inputBytes: normalizedBytes.byteLength,
       outputBytes: encoded.data.byteLength,
-      crop: detectedCrop
+      crop: detectedCrop,
+      qualityWarnings
     }
   };
+}
+
+function assessImageQuality(data: Uint8Array, width: number, height: number) {
+  const histogram = new Uint32Array(256);
+  let samples = 0;
+  let luminanceTotal = 0;
+  let gradientTotal = 0;
+  let gradientSamples = 0;
+  const stride = Math.max(2, Math.floor(Math.max(width, height) / 700));
+
+  for (let y = 0; y < height - stride; y += stride) {
+    for (let x = 0; x < width - stride; x += stride) {
+      const index = (y * width + x) * 4;
+      const rightIndex = (y * width + x + stride) * 4;
+      const downIndex = ((y + stride) * width + x) * 4;
+      const value = luminance(data[index], data[index + 1], data[index + 2]);
+      const right = luminance(data[rightIndex], data[rightIndex + 1], data[rightIndex + 2]);
+      const down = luminance(data[downIndex], data[downIndex + 1], data[downIndex + 2]);
+      histogram[value] += 1;
+      luminanceTotal += value;
+      samples += 1;
+      gradientTotal += Math.abs(value - right) + Math.abs(value - down);
+      gradientSamples += 2;
+    }
+  }
+
+  if (!samples) return ["image_quality_unavailable"];
+  const low = percentile(histogram, samples, 0.02);
+  const high = percentile(histogram, samples, 0.98);
+  const average = luminanceTotal / samples;
+  const averageGradient = gradientTotal / Math.max(1, gradientSamples);
+  const warnings: string[] = [];
+  if (average < 45) warnings.push("image_too_dark");
+  if (average > 245) warnings.push("image_overexposed");
+  if (high - low < 45) warnings.push("image_low_contrast");
+  if (averageGradient < 1.5) warnings.push("image_low_detail_or_blurry");
+  return warnings;
 }
 
 function getResizeAction(width: number | null, height: number | null) {

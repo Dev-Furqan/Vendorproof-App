@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test:ai": "tsx --test tests/ai-pipeline.test.ts",
     "benchmark:ai": "tsx scripts/benchmark-extraction.ts",
+    "diagnose:storage": "tsx scripts/diagnose-storage.ts",
     "seed:demo": "node scripts/seed-demo.js"
   },
   "dependencies": {

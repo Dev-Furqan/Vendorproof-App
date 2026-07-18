@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-07-18T12:10:16.409Z",
+  "model": "google/gemini-3.5-flash",
+  "requestConfiguration": {
+    "reasoningEffort": "minimal",
+    "maxTokens": 1400,
+    "structuredOutput": true,
+    "responseHealing": true
+  },
+  "results": [
+    {
+      "fixture": "coi_completed",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "rawContent": "{\"documentType\":\"coi\",\"documentTypeConfidence\":\"high\",\"businessName\":\"Summit Construction Inc.\",\"policyOrLicenseNumber\":\"CGL-987654321\",\"effectiveDate\":\"2026-01-01\",\"expirationDate\":\"2027-01-01\",\"issuingCarrierOrAuthority\":\"Apex National Insurance Co.\",\"fieldConfidence\":{\"businessName\":\"high\",\"policyOrLicenseNumber\":\"high\",\"effectiveDate\":\"high\",\"expirationDate\":\"high\",\"issuingCarrierOrAuthority\":\"high\"},\"coverageLines\":[{\"coverageType\":\"COMMERCIAL GENERAL LIABILITY\",\"policyNumber\":\"CGL-987654321\",\"effectiveDate\":\"2026-01-01\",\"expirationDate\":\"2027-01-01\",\"carrier\":\"Apex National Insurance Co.\",\"confidence\":\"high\"},{\"coverageType\":\"AUTOMOBILE LIABILITY\",\"policyNumber\":\"AUT-112233445\",\"effectiveDate\":\"2026-01-01\",\"expirationDate\":\"2027-01-01\",\"carrier\":\"Bedrock Casualty Co.\",\"confidence\":\"high\"},{\"coverageType\":\"UMBRELLA LIAB\",\"policyNumber\":null,\"effectiveDate\":\"2026-01-01\",\"expirationDate\":\"2027-01-01\",\"carrier\":\"Granite State Assurance\",\"confidence\":\"medium\"},{\"coverageType\":\"WORKERS COMPENSATION AND EMPLOYERS' LIABILITY\",\"policyNumber\":null,\"effectiveDate\":\"2026-01-01\",\"expirationDate\":\"2027-01-01\",\"carrier\":\"Mountain Peak Indemnity\",\"confidence\":\"medium\"}],\"flags\":[]}",
+      "expectedMatchPercent": 100,
+      "warnings": [],
+      "usage": {
+        "promptTokens": 3003,
+        "completionTokens": 356,
+        "reasoningTokens": 0,
+        "totalTokens": 3359
+      }
+    },
+    {
+      "fixture": "license_real_card",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "rawContent": "{\"documentType\":\"license\",\"documentTypeConfidence\":\"high\",\"businessName\":\"Verde Valley Handyman LLC\",\"policyOrLicenseNumber\":\"ROC 333112\",\"effectiveDate\":null,\"expirationDate\":\"2023-04-30\",\"issuingCarrierOrAuthority\":\"State of Arizona Registrar of Contractors\",\"fieldConfidence\":{\"businessName\":\"high\",\"policyOrLicenseNumber\":\"high\",\"effectiveDate\":\"low\",\"expirationDate\":\"high\",\"issuingCarrierOrAuthority\":\"high\"},\"coverageLines\":[],\"flags\":[]}",
+      "expectedMatchPercent": 100,
+      "warnings": [
+        "low_input_resolution",
+        "expiration_date_in_past"
+      ],
+      "usage": {
+        "promptTokens": 2980,
+        "completionTokens": 109,
+        "reasoningTokens": 0,
+        "totalTokens": 3089
+      }
+    },
+    {
+      "fixture": "w9_completed",
+      "httpStatus": 200,
+      "finishReason": "stop",
+      "rawContent": "{\"documentType\":\"w9\",\"documentTypeConfidence\":\"high\",\"businessName\":\"John Doe\",\"policyOrLicenseNumber\":null,\"effectiveDate\":null,\"expirationDate\":null,\"issuingCarrierOrAuthority\":null,\"fieldConfidence\":{\"businessName\":\"high\",\"policyOrLicenseNumber\":\"low\",\"effectiveDate\":\"low\",\"expirationDate\":\"low\",\"issuingCarrierOrAuthority\":\"low\"},\"coverageLines\":[],\"flags\":[]}",
+      "expectedMatchPercent": 100,
+      "warnings": [],
+      "usage": {
+        "promptTokens": 3003,
+        "completionTokens": 85,
+        "reasoningTokens": 0,
+        "totalTokens": 3088
+      }
+    }
+  ]
+}

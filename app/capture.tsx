@@ -11,7 +11,12 @@ import { AnimatedPressable } from "@/components/ui/AnimatedPressable";
 import { Button } from "@/components/ui/Button";
 import { Text } from "@/components/ui/Text";
 import { useComplianceData } from "@/lib/compliance/data";
-import { uploadCapturedDocument, type UploadStep } from "@/lib/documents/mobile-documents";
+import {
+  createManualReviewDocument,
+  retryCapturedDocumentExtraction,
+  uploadCapturedDocument,
+  type UploadStep
+} from "@/lib/documents/mobile-documents";
 import type { DocumentSource } from "@/lib/documents/preprocess";
 import { toFriendlyNetworkError } from "@/lib/network";
 import { colors } from "@/lib/theme";
@@ -40,6 +45,7 @@ export default function CaptureScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const { data, loading } = useComplianceData();
   const [captured, setCaptured] = useState<CapturedAsset | null>(null);
+  const [manualMode, setManualMode] = useState(false);
   const [documentType, setDocumentType] = useState("");
   const [requirementId, setRequirementId] = useState("");
   const [capturing, setCapturing] = useState(false);
@@ -82,6 +88,7 @@ export default function CaptureScreen() {
     try {
       const photo = await cameraRef.current.takePictureAsync({ quality: 0.88, base64: true, skipProcessing: false });
       if (!photo?.uri) throw new Error("The camera did not return a usable image.");
+      setManualMode(false);
       setCaptured({
         uri: photo.uri,
         base64: photo.base64 ?? null,
@@ -126,6 +133,7 @@ export default function CaptureScreen() {
         setError("The selected image could not be opened. Try a different photo.");
         return;
       }
+      setManualMode(false);
       setCaptured({
         uri: asset.uri,
         base64: asset.base64 ?? null,
@@ -153,6 +161,7 @@ export default function CaptureScreen() {
         setError("The selected PDF could not be opened. Try a different file.");
         return;
       }
+      setManualMode(false);
       setCaptured({
         uri: asset.uri,
         base64: null,
@@ -169,7 +178,7 @@ export default function CaptureScreen() {
   async function usePhoto() {
     setError(null);
     setManualDocumentId(null);
-    if (!captured) return;
+    if (!captured && !manualMode) return;
     if (!documentType) {
       setError("Choose COI, license, or W-9 before uploading.");
       return;
@@ -180,6 +189,18 @@ export default function CaptureScreen() {
     }
 
     try {
+      if (manualMode) {
+        setUploadStep("creating_record");
+        const documentId = await createManualReviewDocument({
+          documentType,
+          requirement: selectedRequirement,
+          reason: "Created through the manual-entry fallback."
+        });
+        setUploadStep(null);
+        router.replace(`/documents/${documentId}`);
+        return;
+      }
+      if (!captured) return;
       const result = await uploadCapturedDocument({
         source: captured,
         documentType,
@@ -200,6 +221,28 @@ export default function CaptureScreen() {
     }
   }
 
+  async function retryExtraction() {
+    if (!captured || !manualDocumentId || !documentType) return;
+    setError(null);
+    try {
+      const result = await retryCapturedDocumentExtraction({
+        documentId: manualDocumentId,
+        source: captured,
+        documentType,
+        onStep: setUploadStep
+      });
+      setUploadStep(null);
+      if (result.extractionError) {
+        setError(`AI extraction still needs manual review: ${result.extractionError}`);
+        return;
+      }
+      router.replace(`/documents/${result.documentId}`);
+    } catch (retryError) {
+      setUploadStep(null);
+      setError(toFriendlyNetworkError(retryError, "Extraction retry failed. You can retry again or enter fields manually."));
+    }
+  }
+
   if (!permission?.granted) {
     const blocked = permission && !permission.canAskAgain;
     return (
@@ -216,6 +259,9 @@ export default function CaptureScreen() {
           <Button variant="secondary" onPress={pickPdf}>
             Choose PDF
           </Button>
+          <Button variant="secondary" onPress={() => setManualMode(true)}>
+            Enter Fields Manually
+          </Button>
           <Button variant="ghost" onPress={() => router.back()}>
             Cancel
           </Button>
@@ -224,28 +270,42 @@ export default function CaptureScreen() {
     );
   }
 
-  if (captured) {
+  if (captured || manualMode) {
     return (
       <View style={styles.previewRoot}>
         <ScrollView contentContainerStyle={styles.previewContent}>
           <View style={styles.previewHeader}>
-            <Button variant="ghost" className="items-start px-0" disabled={busy} onPress={() => setCaptured(null)}>
-              Retake
+            <Button
+              variant="ghost"
+              className="items-start px-0"
+              disabled={busy}
+              onPress={() => {
+                setCaptured(null);
+                setManualMode(false);
+              }}
+            >
+              {manualMode ? "Back" : "Retake"}
             </Button>
-            <Text variant="title">Preview</Text>
+            <Text variant="title">{manualMode ? "Manual Entry" : "Preview"}</Text>
             <Button variant="ghost" className="items-start px-0" disabled={busy} onPress={() => router.back()}>
               Close
             </Button>
           </View>
 
-          {captured.mimeType === "application/pdf" ? (
+          {manualMode ? (
+            <View style={styles.pdfPreview}>
+              <MaterialCommunityIcons name="form-textbox" size={52} color={colors.accent} />
+              <Text variant="title">Create a manual review</Text>
+              <Text variant="muted">Choose the document type and vendor requirement. You can enter every field on the next screen.</Text>
+            </View>
+          ) : captured?.mimeType === "application/pdf" ? (
             <View style={styles.pdfPreview}>
               <MaterialCommunityIcons name="file-pdf-box" size={52} color={colors.accent} />
               <Text variant="title">{captured.fileName}</Text>
               <Text variant="muted">PDF pages will be rendered and OCR-processed securely before extraction.</Text>
             </View>
           ) : (
-            <Image source={{ uri: captured.uri }} style={styles.previewImage} resizeMode="contain" />
+            <Image source={{ uri: captured!.uri }} style={styles.previewImage} resizeMode="contain" />
           )}
 
           <View style={styles.panel}>
@@ -295,22 +355,31 @@ export default function CaptureScreen() {
             <View style={styles.errorBox}>
               <Text className="text-missing">{error}</Text>
               {manualDocumentId ? (
-                <Button variant="secondary" onPress={() => router.replace(`/documents/${manualDocumentId}`)}>
-                  Open Manual Review
-                </Button>
+                <>
+                  <Button disabled={busy} onPress={retryExtraction}>
+                    Retry AI Extraction
+                  </Button>
+                  <Button variant="secondary" disabled={busy} onPress={() => router.replace(`/documents/${manualDocumentId}`)}>
+                    Enter Fields Manually
+                  </Button>
+                </>
               ) : null}
             </View>
           ) : null}
 
           <Button disabled={busy || !documentType || !selectedRequirement} onPress={usePhoto}>
-            {uploadStep ? stepLabels[uploadStep] : "Use This Photo"}
+            {uploadStep ? stepLabels[uploadStep] : manualMode ? "Continue to Manual Entry" : "Use This Photo"}
           </Button>
-          <Button variant="secondary" disabled={busy} onPress={pickFromGallery}>
-            Choose Different Photo
-          </Button>
-          <Button variant="secondary" disabled={busy} onPress={pickPdf}>
-            Choose PDF
-          </Button>
+          {!manualMode ? (
+            <>
+              <Button variant="secondary" disabled={busy} onPress={pickFromGallery}>
+                Choose Different Photo
+              </Button>
+              <Button variant="secondary" disabled={busy} onPress={pickPdf}>
+                Choose PDF
+              </Button>
+            </>
+          ) : null}
         </ScrollView>
       </View>
     );
@@ -339,6 +408,9 @@ export default function CaptureScreen() {
         {error ? (
           <View style={styles.cameraError}>
             <Text className="text-missing">{error}</Text>
+            <Button variant="secondary" disabled={capturing} onPress={() => setManualMode(true)}>
+              Enter Fields Manually
+            </Button>
           </View>
         ) : null}
 
