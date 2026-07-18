@@ -5,7 +5,7 @@ import { AnimatedPressable } from "@/components/ui/AnimatedPressable";
 import { Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Text } from "@/components/ui/Text";
-import { colors } from "@/lib/theme";
+import { alpha, colors, radii, spacing } from "@/lib/theme";
 import type { PropertySummary } from "@/types/compliance";
 
 export function PropertyCard({ property, index = 0 }: { property: PropertySummary; index?: number }) {
@@ -48,10 +48,10 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 44,
     height: 44,
-    borderRadius: 8,
+    borderRadius: radii.md,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(87, 241, 219, 0.1)"
+    backgroundColor: alpha(colors.accent, 0.1)
   },
   copy: {
     gap: 3
@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
     gap: 12,
     borderTopWidth: 1,
     borderTopColor: colors.border,
-    paddingTop: 14,
-    marginTop: 4
+    paddingTop: spacing.lg,
+    marginTop: spacing.xs
   },
   avatarStack: {
     flexDirection: "row",

@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import { StyleSheet, View, ViewStyle } from "react-native";
 
-import { colors, shadows } from "@/lib/theme";
+import { colors, radii, shadows, spacing } from "@/lib/theme";
 
 export function Card({ children, className = "", style }: PropsWithChildren<{ className?: string; style?: ViewStyle | ViewStyle[] }>) {
   return (
@@ -19,9 +19,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderWidth: 1,
-    borderRadius: 12,
-    padding: 20,
-    gap: 14,
+    borderRadius: radii.lg,
+    padding: spacing.card,
+    gap: spacing.lg,
     ...shadows.card
   },
   muted: {

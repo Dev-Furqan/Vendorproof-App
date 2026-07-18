@@ -1,10 +1,12 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Image, StyleSheet, TextInput, View } from "react-native";
+import { ActivityIndicator, Image, StyleSheet, View } from "react-native";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { FormInput } from "@/components/ui/FormInput";
 import { Screen } from "@/components/ui/Screen";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Text } from "@/components/ui/Text";
@@ -13,7 +15,7 @@ import { getCurrentWorkspace, useComplianceData } from "@/lib/compliance/data";
 import { createDocumentSignedUrl, updateDocumentCompat } from "@/lib/documents/mobile-documents";
 import { toFriendlyNetworkError } from "@/lib/network";
 import { supabase } from "@/lib/supabase/client";
-import { colors } from "@/lib/theme";
+import { alpha, colors, radii, spacing } from "@/lib/theme";
 
 export default function DocumentReviewScreen() {
   const { documentId } = useLocalSearchParams<{ documentId: string }>();
@@ -164,10 +166,7 @@ export default function DocumentReviewScreen() {
         ) : null}
 
         {!loading && !document ? (
-          <Card>
-            <Text variant="title">Document not found</Text>
-            <Text variant="muted">This review opens only for real documents synced from Supabase.</Text>
-          </Card>
+          <EmptyState icon="file-search-outline" title="Document not found" message="This document may have moved or is no longer available to review." actionLabel="Return to Dashboard" onAction={() => router.replace("/(tabs)")} />
         ) : null}
 
         <Card className="bg-surface-muted" style={styles.preview}>
@@ -183,13 +182,18 @@ export default function DocumentReviewScreen() {
         </Card>
 
         {document ? (
-          <Card>
-          <View style={styles.cardHeader}>
-            <View>
+          <Card style={[styles.aiCard, document.status === "approved" ? styles.aiCardConfirmed : styles.aiCardPending]}>
+          <View style={[styles.cardHeader, styles.aiHeader]}>
+            <View style={styles.aiTitle}>
+              <View style={[styles.aiIcon, document.status === "approved" && styles.aiIconConfirmed]}>
+                <MaterialCommunityIcons name={document.status === "approved" ? "check-decagram" : "creation"} size={20} color={document.status === "approved" ? colors.compliant : colors.review} />
+              </View>
+              <View>
               <Text variant="title">AI Extracted Data</Text>
-              <Text variant="muted">AI-extracted, please confirm</Text>
+              <Text variant="muted">{document.status === "approved" ? "Reviewed and confirmed" : "AI-extracted — please confirm each field"}</Text>
+              </View>
             </View>
-            <StatusBadge status={document.status === "approved" ? "compliant" : "under_review"} />
+            <StatusBadge status={document.status === "approved" ? "compliant" : "under_review"} label={document.status === "approved" ? "Confirmed" : "Needs confirmation"} />
           </View>
           {extraction ? (
             <Text variant="muted">
@@ -204,12 +208,12 @@ export default function DocumentReviewScreen() {
               ))}
             </View>
           ) : null}
-          <FieldInput label="Document Type" confidence={extraction?.documentTypeConfidence} value={fields.documentType} onChangeText={(documentType) => setFields((current) => ({ ...current, documentType }))} />
-          <FieldInput label="Insured / Business Name" confidence={extraction?.fieldConfidence.businessName} value={fields.businessName} onChangeText={(businessName) => setFields((current) => ({ ...current, businessName }))} />
-          <FieldInput label="Policy / License Number" confidence={extraction?.fieldConfidence.policyOrLicenseNumber} value={fields.policyNumber} onChangeText={(policyNumber) => setFields((current) => ({ ...current, policyNumber }))} />
-          <FieldInput label="Effective Date" confidence={extraction?.fieldConfidence.effectiveDate} value={fields.effectiveDate} onChangeText={(effectiveDate) => setFields((current) => ({ ...current, effectiveDate }))} />
-          <FieldInput label="Expiration Date" confidence={extraction?.fieldConfidence.expirationDate} value={fields.expirationDate} onChangeText={(expirationDate) => setFields((current) => ({ ...current, expirationDate }))} />
-          <FieldInput label="Carrier / Authority" confidence={extraction?.fieldConfidence.issuingCarrierOrAuthority} value={fields.carrier} onChangeText={(carrier) => setFields((current) => ({ ...current, carrier }))} />
+          <FieldInput confirmed={document.status === "approved"} label="Document Type" confidence={extraction?.documentTypeConfidence} value={fields.documentType} onChangeText={(documentType) => setFields((current) => ({ ...current, documentType }))} />
+          <FieldInput confirmed={document.status === "approved"} label="Insured / Business Name" confidence={extraction?.fieldConfidence.businessName} value={fields.businessName} onChangeText={(businessName) => setFields((current) => ({ ...current, businessName }))} />
+          <FieldInput confirmed={document.status === "approved"} label="Policy / License Number" confidence={extraction?.fieldConfidence.policyOrLicenseNumber} value={fields.policyNumber} onChangeText={(policyNumber) => setFields((current) => ({ ...current, policyNumber }))} />
+          <FieldInput confirmed={document.status === "approved"} label="Effective Date" confidence={extraction?.fieldConfidence.effectiveDate} value={fields.effectiveDate} onChangeText={(effectiveDate) => setFields((current) => ({ ...current, effectiveDate }))} />
+          <FieldInput confirmed={document.status === "approved"} label="Expiration Date" confidence={extraction?.fieldConfidence.expirationDate} value={fields.expirationDate} onChangeText={(expirationDate) => setFields((current) => ({ ...current, expirationDate }))} />
+          <FieldInput confirmed={document.status === "approved"} label="Carrier / Authority" confidence={extraction?.fieldConfidence.issuingCarrierOrAuthority} value={fields.carrier} onChangeText={(carrier) => setFields((current) => ({ ...current, carrier }))} />
           {document.ai_extraction_error ? <Text className="text-expiring">AI extraction note: {document.ai_extraction_error}</Text> : null}
           </Card>
         ) : null}
@@ -270,16 +274,17 @@ export default function DocumentReviewScreen() {
   );
 }
 
-function FieldInput({ label, confidence, value, onChangeText }: { label: string; confidence?: "high" | "medium" | "low"; value: string; onChangeText: (value: string) => void }) {
+function FieldInput({ label, confidence, confirmed, value, onChangeText }: { label: string; confidence?: "high" | "medium" | "low"; confirmed: boolean; value: string; onChangeText: (value: string) => void }) {
   return (
-    <View style={styles.fieldBox}>
-      <View style={styles.fieldLabelRow}>
-        <Text variant="label">{label}</Text>
-        {confidence ? <Text variant="muted">{confidence} confidence</Text> : null}
+    <View style={[styles.fieldBox, confirmed ? styles.fieldConfirmed : styles.fieldPending]}>
+      <View style={styles.fieldState}>
+        <MaterialCommunityIcons name={confirmed ? "check-circle" : "creation"} size={15} color={confirmed ? colors.compliant : colors.review} />
+        <Text variant="muted" style={{ color: confirmed ? colors.compliant : colors.review }}>{confirmed ? "Confirmed" : "AI suggestion"}</Text>
       </View>
-      <TextInput
+      <FormInput
+        label={label}
+        hint={confidence ? `${confidence} confidence` : undefined}
         placeholder="Not captured"
-        placeholderTextColor={colors.muted}
         style={styles.input}
         value={value}
         onChangeText={onChangeText}
@@ -306,7 +311,7 @@ function normalizeDate(value: string) {
 
 const styles = StyleSheet.create({
   stack: {
-    gap: 24
+    gap: spacing.section
   },
   header: {
     gap: 12
@@ -332,25 +337,58 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 12
   },
-  fieldBox: {
-    gap: 4,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.input,
-    padding: 12
+  aiCard: {
+    borderWidth: 1
   },
-  fieldLabelRow: {
+  aiHeader: {
+    alignItems: "flex-start",
+    flexDirection: "column"
+  },
+  aiCardPending: {
+    borderColor: alpha(colors.review, 0.42),
+    backgroundColor: alpha(colors.review, 0.045)
+  },
+  aiCardConfirmed: {
+    borderColor: alpha(colors.compliant, 0.32)
+  },
+  aiTitle: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12
+    gap: spacing.md
+  },
+  aiIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: radii.md,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: alpha(colors.review, 0.12)
+  },
+  aiIconConfirmed: {
+    backgroundColor: alpha(colors.compliant, 0.1)
+  },
+  fieldBox: {
+    gap: spacing.sm,
+    borderRadius: radii.md,
+    borderWidth: 1,
+    padding: spacing.md
+  },
+  fieldPending: {
+    borderColor: alpha(colors.review, 0.22),
+    backgroundColor: alpha(colors.review, 0.035)
+  },
+  fieldConfirmed: {
+    borderColor: alpha(colors.compliant, 0.18),
+    backgroundColor: alpha(colors.compliant, 0.025)
+  },
+  fieldState: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6
   },
   input: {
-    minHeight: 40,
-    color: colors.foreground,
-    fontSize: 16,
-    padding: 0
+    minHeight: 48
   },
   checkRow: {
     flexDirection: "row",

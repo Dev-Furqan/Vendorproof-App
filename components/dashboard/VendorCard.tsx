@@ -6,7 +6,7 @@ import { AnimatedPressable } from "@/components/ui/AnimatedPressable";
 import { Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Text } from "@/components/ui/Text";
-import { colors } from "@/lib/theme";
+import { alpha, colors, radii, spacing } from "@/lib/theme";
 import type { VendorSummary } from "@/types/compliance";
 
 export function VendorCard({ vendor, index = 0 }: { vendor: VendorSummary; index?: number }) {
@@ -31,7 +31,12 @@ export function VendorCard({ vendor, index = 0 }: { vendor: VendorSummary; index
               </View>
               <StatusBadge status={vendor.status} delay={index * 25} />
             </View>
-            {vendor.expiresAt ? <Text variant="muted">Valid until {vendor.expiresAt}</Text> : null}
+            {vendor.expiresAt ? (
+              <View style={styles.expiryRow}>
+                <MaterialCommunityIcons name="calendar-clock-outline" size={15} color={vendor.status === "expiring" ? colors.expiring : colors.muted} />
+                <Text variant="muted" className={vendor.status === "expiring" ? "text-expiring" : ""}>Valid until {vendor.expiresAt}</Text>
+              </View>
+            ) : null}
           </View>
         </View>
       </Card>
@@ -48,10 +53,10 @@ const styles = StyleSheet.create({
   iconWrap: {
     width: 48,
     height: 48,
-    borderRadius: 8,
+    borderRadius: radii.md,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.surfaceMuted
+    backgroundColor: alpha(colors.accent, 0.08)
   },
   body: {
     flex: 1,
@@ -65,5 +70,10 @@ const styles = StyleSheet.create({
   },
   titleWrap: {
     flex: 1
+  },
+  expiryRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm
   }
 });

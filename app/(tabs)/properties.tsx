@@ -3,11 +3,13 @@ import { StyleSheet, View } from "react-native";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { PropertyCard } from "@/components/dashboard/PropertyCard";
 import { Card } from "@/components/ui/Card";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { FloatingCaptureButton } from "@/components/ui/FloatingCaptureButton";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { useComplianceData } from "@/lib/compliance/data";
 import { toPropertySummaries } from "@/lib/compliance/view-models";
+import { spacing } from "@/lib/theme";
 
 export default function PropertiesScreen() {
   const { data, loading, error } = useComplianceData();
@@ -35,10 +37,7 @@ export default function PropertiesScreen() {
             <PropertyCard key={property.id} property={property} index={index} />
           ))}
           {!loading && rows.length === 0 ? (
-            <Card>
-              <Text variant="title">No properties yet</Text>
-              <Text variant="muted">Add portfolio properties in the web app and they will appear here in real time.</Text>
-            </Card>
+            <EmptyState icon="office-building-plus-outline" title="No properties yet" message="Properties will appear here as soon as their first vendor document is added." actionLabel="Capture a Document" onAction={() => router.push("/capture")} />
           ) : null}
         </View>
         </View>
@@ -50,12 +49,13 @@ export default function PropertiesScreen() {
 
 const styles = StyleSheet.create({
   stack: {
-    gap: 24
+    gap: spacing.section
   },
   hero: {
     gap: 4
   },
   list: {
-    gap: 12
+    gap: spacing.md
   }
 });
+import { router } from "expo-router";

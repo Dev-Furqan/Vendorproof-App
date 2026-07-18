@@ -2,16 +2,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { FormInput } from "@/components/ui/FormInput";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { toFriendlyNetworkError } from "@/lib/network";
 import { supabase } from "@/lib/supabase/client";
-import { colors } from "@/lib/theme";
+import { alpha, colors } from "@/lib/theme";
 
 const resetSchema = z
   .object({
@@ -59,16 +60,14 @@ export default function ResetPasswordScreen() {
         </View>
 
         <View style={styles.field}>
-          <Text variant="label">New Password</Text>
           <Controller
             control={control}
             name="password"
             render={({ field: { onChange, value } }) => (
-              <TextInput
+              <FormInput
+                label="New Password"
                 secureTextEntry
                 placeholder="********"
-                placeholderTextColor={colors.muted}
-                style={styles.input}
                 value={value}
                 onChangeText={onChange}
               />
@@ -78,16 +77,14 @@ export default function ResetPasswordScreen() {
         </View>
 
         <View style={styles.field}>
-          <Text variant="label">Confirm Password</Text>
           <Controller
             control={control}
             name="confirmPassword"
             render={({ field: { onChange, value } }) => (
-              <TextInput
+              <FormInput
+                label="Confirm Password"
                 secureTextEntry
                 placeholder="********"
-                placeholderTextColor={colors.muted}
-                style={styles.input}
                 value={value}
                 onChangeText={onChange}
               />
@@ -127,21 +124,11 @@ const styles = StyleSheet.create({
   field: {
     gap: 8
   },
-  input: {
-    minHeight: 48,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.input,
-    color: colors.foreground,
-    paddingHorizontal: 14,
-    fontSize: 16
-  },
   errorBox: {
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "rgba(253, 164, 175, 0.3)",
-    backgroundColor: "rgba(253, 164, 175, 0.08)",
+    borderColor: alpha(colors.missing, 0.3),
+    backgroundColor: alpha(colors.missing, 0.08),
     padding: 12
   }
 });

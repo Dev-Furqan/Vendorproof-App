@@ -9,6 +9,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } 
 
 import { AnimatedPressable } from "@/components/ui/AnimatedPressable";
 import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Text } from "@/components/ui/Text";
 import { useComplianceData } from "@/lib/compliance/data";
 import {
@@ -339,7 +340,7 @@ export default function CaptureScreen() {
                 />
               ))}
               {!loading && requirements.length === 0 ? (
-                <Text variant="muted">No requirements are available for this account yet.</Text>
+                <EmptyState icon="clipboard-alert-outline" title="No requirements yet" message="A vendor requirement is needed before a document can be attached." actionLabel="Return to Vendors" onAction={() => router.replace("/(tabs)/vendors")} />
               ) : null}
             </View>
           </View>

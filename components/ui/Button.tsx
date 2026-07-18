@@ -2,7 +2,7 @@ import { PropsWithChildren, isValidElement } from "react";
 import { Pressable, PressableProps, StyleSheet, ViewStyle } from "react-native";
 
 import { Text } from "@/components/ui/Text";
-import { colors } from "@/lib/theme";
+import { alpha, colors } from "@/lib/theme";
 
 type ButtonProps = PropsWithChildren<
   PressableProps & {
@@ -22,7 +22,7 @@ export function Button({ children, variant = "primary", className = "", style, .
   const palette = {
     primary: { backgroundColor: colors.accent, borderColor: colors.accent },
     secondary: { backgroundColor: colors.surfaceMuted, borderColor: colors.border },
-    danger: { backgroundColor: "rgba(253, 164, 175, 0.1)", borderColor: "rgba(253, 164, 175, 0.3)" },
+    danger: { backgroundColor: alpha(colors.missing, 0.1), borderColor: alpha(colors.missing, 0.3) },
     ghost: { backgroundColor: "transparent", borderColor: "transparent" }
   }[variant];
 
@@ -55,7 +55,7 @@ const buttonStyles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 999,
-    borderWidth: 0,
+    borderWidth: 1,
     alignItems: "center",
     justifyContent: "center"
   },
@@ -80,7 +80,7 @@ const buttonStyles = StyleSheet.create({
     paddingVertical: 0
   },
   pressed: {
-    opacity: 0.82,
+    opacity: 0.88,
     transform: [{ scale: 0.99 }]
   },
   disabled: {

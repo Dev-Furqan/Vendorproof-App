@@ -2,7 +2,7 @@ import { PropsWithChildren, useEffect, useState } from "react";
 import { Pressable, StyleSheet, ViewStyle } from "react-native";
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
-import { colors } from "@/lib/theme";
+import { colors, radii, spacing } from "@/lib/theme";
 
 export function AnimatedSheet({
   visible,
@@ -60,10 +60,10 @@ const styles = StyleSheet.create({
     left: 12,
     right: 12,
     bottom: 12,
-    borderRadius: 18,
+    borderRadius: radii.xl,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.surface,
-    padding: 16
+    padding: spacing.xl
   }
 });

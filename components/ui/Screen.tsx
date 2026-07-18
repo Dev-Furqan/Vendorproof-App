@@ -2,7 +2,7 @@ import { PropsWithChildren, ReactElement } from "react";
 import { RefreshControlProps, ScrollView, StyleSheet, View, ViewStyle } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { colors } from "@/lib/theme";
+import { colors, spacing } from "@/lib/theme";
 
 type ScreenProps = PropsWithChildren<{
   scroll?: boolean;
@@ -53,10 +53,10 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 520,
     alignSelf: "center",
-    paddingHorizontal: 16,
-    paddingTop: 14,
+    paddingHorizontal: spacing.screen,
+    paddingTop: spacing.lg,
     paddingBottom: 24,
-    gap: 24
+    gap: spacing.section
   },
   fill: {
     flex: 1,

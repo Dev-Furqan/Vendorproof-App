@@ -1,15 +1,19 @@
 import { useMemo, useState } from "react";
-import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 import { VendorCard } from "@/components/dashboard/VendorCard";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { Card } from "@/components/ui/Card";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { FormInput } from "@/components/ui/FormInput";
 import { FloatingCaptureButton } from "@/components/ui/FloatingCaptureButton";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { useComplianceData } from "@/lib/compliance/data";
 import { toVendorSummaries } from "@/lib/compliance/view-models";
-import { colors } from "@/lib/theme";
+import { colors, spacing } from "@/lib/theme";
 import type { ComplianceStatus } from "@/types/compliance";
 
 const filters: Array<{ label: string; value: ComplianceStatus | "all" }> = [
@@ -45,13 +49,16 @@ export default function VendorsScreen() {
           <Text variant="muted">Manage compliance for {vendors.length} registered entities.</Text>
         </View>
 
-        <TextInput
+        <View style={styles.searchWrap}>
+          <MaterialCommunityIcons name="magnify" size={20} color={colors.muted} />
+        <FormInput
           placeholder="Search vendors"
-          placeholderTextColor={colors.muted}
+          containerStyle={styles.searchInput}
           style={styles.input}
           value={query}
           onChangeText={setQuery}
         />
+        </View>
 
         <View style={styles.filters}>
           {filters.map((item) => {
@@ -80,10 +87,18 @@ export default function VendorsScreen() {
             <VendorCard key={vendor.id} vendor={vendor} index={index} />
           ))}
           {!loading && filtered.length === 0 ? (
-            <Card>
-              <Text variant="title">No vendors found</Text>
-              <Text variant="muted">Adjust the search or add vendors in the web app.</Text>
-            </Card>
+            <EmptyState
+              icon={query || filter !== "all" ? "magnify-close" : "account-hard-hat-outline"}
+              title={query || filter !== "all" ? "No matching vendors" : "No vendors yet"}
+              message={query || filter !== "all" ? "Try a different search or clear the active filter." : "Capture a vendor document to start building your compliance list."}
+              actionLabel={query || filter !== "all" ? "Clear Filters" : "Capture a Document"}
+              onAction={() => {
+                if (query || filter !== "all") {
+                  setQuery("");
+                  setFilter("all");
+                } else router.push("/capture");
+              }}
+            />
           ) : null}
         </View>
         </View>
@@ -95,20 +110,32 @@ export default function VendorsScreen() {
 
 const styles = StyleSheet.create({
   stack: {
-    gap: 16
+    gap: spacing.section
   },
   hero: {
     gap: 4
   },
   input: {
-    minHeight: 48,
-    borderRadius: 8,
+    flex: 1,
+    minHeight: 50,
+    borderWidth: 0,
+    backgroundColor: "transparent",
+    paddingLeft: 0
+  },
+  searchWrap: {
+    minHeight: 52,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.input,
-    color: colors.foreground,
-    paddingHorizontal: 16,
-    fontSize: 16
+    paddingLeft: 14,
+    paddingRight: 4
+  },
+  searchInput: {
+    flex: 1
   },
   filters: {
     flexDirection: "row",
@@ -130,6 +157,6 @@ const styles = StyleSheet.create({
     opacity: 0.82
   },
   list: {
-    gap: 12
+    gap: spacing.md
   }
 });

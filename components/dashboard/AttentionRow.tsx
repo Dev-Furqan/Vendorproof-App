@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { AnimatedPressable } from "@/components/ui/AnimatedPressable";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Text } from "@/components/ui/Text";
-import { colors } from "@/lib/theme";
+import { alpha, colors, radii, shadows, spacing } from "@/lib/theme";
 import type { AttentionItem } from "@/types/compliance";
 
 export function AttentionRow({ item, index = 0 }: { item: AttentionItem; index?: number }) {
@@ -35,12 +35,13 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 12,
-    padding: 12,
-    borderRadius: 12,
+    gap: spacing.md,
+    padding: spacing.lg,
+    borderRadius: radii.lg,
     borderWidth: 1,
     borderColor: colors.border,
-    backgroundColor: colors.surface
+    backgroundColor: colors.surface,
+    ...shadows.card
   },
   iconWrap: {
     width: 42,
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(34, 242, 210, 0.1)"
+    backgroundColor: alpha(colors.accent, 0.1)
   },
   body: {
     flex: 1,

@@ -50,24 +50,25 @@ function inferExtraStyle(className: string): TextStyle {
 
 const variantStyles = StyleSheet.create({
   display: {
-    fontSize: 48,
+    fontSize: 40,
     fontWeight: "700",
-    lineHeight: 56,
-    letterSpacing: 0
+    lineHeight: 46,
+    letterSpacing: -0.8
   },
   headline: {
-    fontSize: 24,
-    fontWeight: "600",
-    lineHeight: 32
+    fontSize: 28,
+    fontWeight: "700",
+    lineHeight: 34,
+    letterSpacing: -0.35
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "600",
-    lineHeight: 28
+    lineHeight: 24
   },
   body: {
     fontSize: 16,
-    fontWeight: "300",
+    fontWeight: "400",
     lineHeight: 24
   },
   label: {
@@ -79,7 +80,7 @@ const variantStyles = StyleSheet.create({
   },
   muted: {
     fontSize: 14,
-    fontWeight: "300",
+    fontWeight: "400",
     lineHeight: 20
   }
 });

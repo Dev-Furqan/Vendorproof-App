@@ -21,18 +21,26 @@ export const colors = {
 } as const;
 
 export const spacing = {
+  xs: 4,
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  xxl: 24,
+  xxxl: 32,
   screen: 16,
-  card: 24,
+  card: 20,
   stackSm: 8,
   stackMd: 16,
   stackLg: 24,
-  section: 24
+  section: 28
 } as const;
 
 export const radii = {
-  sm: 4,
-  md: 8,
-  lg: 12,
+  sm: 6,
+  md: 10,
+  lg: 14,
+  xl: 18,
   full: 999
 } as const;
 

@@ -4,13 +4,14 @@ import { StyleSheet, View } from "react-native";
 import { AppHeader } from "@/components/ui/AppHeader";
 import { AnimatedPressable } from "@/components/ui/AnimatedPressable";
 import { Card } from "@/components/ui/Card";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { FloatingCaptureButton } from "@/components/ui/FloatingCaptureButton";
 import { Screen } from "@/components/ui/Screen";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Text } from "@/components/ui/Text";
 import { useComplianceData } from "@/lib/compliance/data";
 import { toAttentionItems } from "@/lib/compliance/view-models";
-import { colors } from "@/lib/theme";
+import { colors, spacing } from "@/lib/theme";
 
 export default function NotificationsScreen() {
   const { data, loading, error } = useComplianceData();
@@ -58,10 +59,7 @@ export default function NotificationsScreen() {
           ))}
 
           {!loading && alerts.length === 0 ? (
-            <Card>
-              <Text variant="title">No notifications yet</Text>
-              <Text variant="muted">Live alerts will appear here when requirements are missing, expiring, or under review.</Text>
-            </Card>
+            <EmptyState icon="bell-check-outline" title="You’re all caught up" message="Missing, expiring, and review alerts will appear here." actionLabel="View Dashboard" onAction={() => router.push("/(tabs)")} />
           ) : null}
         </View>
         </View>
@@ -73,13 +71,13 @@ export default function NotificationsScreen() {
 
 const styles = StyleSheet.create({
   stack: {
-    gap: 24
+    gap: spacing.section
   },
   hero: {
     gap: 4
   },
   list: {
-    gap: 12
+    gap: spacing.md
   },
   dateLabel: {
     marginBottom: 8,
@@ -95,8 +93,8 @@ const styles = StyleSheet.create({
     gap: 4
   },
   unreadDot: {
-    width: 10,
-    height: 10,
+    width: 8,
+    height: 8,
     borderRadius: 999,
     backgroundColor: colors.accent
   }

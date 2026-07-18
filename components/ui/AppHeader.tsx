@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface
   },
   eyebrow: {
-    fontSize: 10,
-    lineHeight: 14,
+    fontSize: 12,
+    lineHeight: 16,
     color: colors.muted
   },
   brand: {

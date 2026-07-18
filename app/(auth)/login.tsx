@@ -3,18 +3,19 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { FormInput } from "@/components/ui/FormInput";
 import { Screen } from "@/components/ui/Screen";
 import { Text } from "@/components/ui/Text";
 import { ensureMobileWorkspace } from "@/lib/auth/workspace";
 import { toFriendlyNetworkError } from "@/lib/network";
 import { oauthRedirectTo, signInWithGoogleOAuth } from "@/lib/supabase/auth";
 import { supabase } from "@/lib/supabase/client";
-import { colors } from "@/lib/theme";
+import { alpha, colors, radii, spacing } from "@/lib/theme";
 
 const authSchema = z.object({
   fullName: z.string().optional(),
@@ -174,17 +175,15 @@ export default function LoginScreen() {
         </View>
 
         {isSignup ? (
-          <View style={styles.field}>
-            <Text variant="label">Full Name</Text>
+          <View>
             <Controller
               control={control}
               name="fullName"
               render={({ field: { onChange, value } }) => (
-                <TextInput
+                <FormInput
+                  label="Full Name"
                   autoCapitalize="words"
                   placeholder="Your name"
-                  placeholderTextColor={colors.muted}
-                  style={styles.input}
                   value={value}
                   onChangeText={onChange}
                 />
@@ -193,18 +192,16 @@ export default function LoginScreen() {
           </View>
         ) : null}
 
-        <View style={styles.field}>
-          <Text variant="label">Email Address</Text>
+        <View>
           <Controller
             control={control}
             name="email"
             render={({ field: { onChange, value } }) => (
-              <TextInput
+              <FormInput
+                label="Email Address"
                 autoCapitalize="none"
                 keyboardType="email-address"
                 placeholder="you@company.com"
-                placeholderTextColor={colors.muted}
-                style={styles.input}
                 value={value}
                 onChangeText={onChange}
               />
@@ -212,7 +209,7 @@ export default function LoginScreen() {
           />
         </View>
 
-        <View style={styles.field}>
+        <View style={styles.passwordField}>
           <View style={styles.passwordHeader}>
             <Text variant="label">Password</Text>
             <Pressable onPress={sendPasswordReset} disabled={submitting}>
@@ -225,11 +222,9 @@ export default function LoginScreen() {
             control={control}
             name="password"
             render={({ field: { onChange, value } }) => (
-              <TextInput
+              <FormInput
                 secureTextEntry
                 placeholder="********"
-                placeholderTextColor={colors.muted}
-                style={styles.input}
                 value={value}
                 onChangeText={onChange}
               />
@@ -297,21 +292,21 @@ const styles = StyleSheet.create({
   logo: {
     width: 64,
     height: 64,
-    borderRadius: 12,
+    borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: "rgba(87, 241, 219, 0.25)",
+    borderColor: alpha(colors.accent, 0.25),
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(87, 241, 219, 0.1)"
+    backgroundColor: alpha(colors.accent, 0.1)
   },
   centerCopy: {
     alignItems: "center",
     gap: 4
   },
   formCard: {
-    gap: 16,
-    padding: 20,
-    backgroundColor: "rgba(17, 24, 39, 0.84)"
+    gap: spacing.lg,
+    padding: spacing.xl,
+    backgroundColor: colors.surface
   },
   modeRow: {
     flexDirection: "row",
@@ -332,31 +327,21 @@ const styles = StyleSheet.create({
   modeButtonActive: {
     backgroundColor: colors.accent
   },
-  field: {
-    gap: 8
-  },
-  input: {
-    minHeight: 48,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.input,
-    color: colors.foreground,
-    paddingHorizontal: 14,
-    fontSize: 16
+  passwordField: {
+    gap: spacing.sm
   },
   errorBox: {
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "rgba(253, 164, 175, 0.3)",
-    backgroundColor: "rgba(253, 164, 175, 0.08)",
+    borderColor: alpha(colors.missing, 0.3),
+    backgroundColor: alpha(colors.missing, 0.08),
     padding: 12
   },
   messageBox: {
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "rgba(87, 241, 219, 0.28)",
-    backgroundColor: "rgba(87, 241, 219, 0.08)",
+    borderColor: alpha(colors.compliant, 0.28),
+    backgroundColor: alpha(colors.compliant, 0.08),
     padding: 12
   },
   dividerRow: {

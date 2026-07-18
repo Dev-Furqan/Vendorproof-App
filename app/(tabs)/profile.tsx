@@ -10,7 +10,7 @@ import { Text } from "@/components/ui/Text";
 import { getCurrentWorkspace } from "@/lib/compliance/data";
 import { toFriendlyNetworkError } from "@/lib/network";
 import { supabase } from "@/lib/supabase/client";
-import { colors } from "@/lib/theme";
+import { alpha, colors, radii, spacing } from "@/lib/theme";
 
 export default function ProfileScreen() {
   const [workspace, setWorkspace] = useState<{ name: string; role: string | null; email: string | null }>({
@@ -70,13 +70,16 @@ export default function ProfileScreen() {
           <Text variant="muted">{workspace.role ? `${workspace.name} - ${workspace.role}` : workspace.name}</Text>
         </View>
 
-        <Card>
-          <View style={styles.avatar}>
-            <Text className="text-2xl font-extrabold text-accent">{initials}</Text>
-          </View>
-          <View>
-            <Text variant="title">{workspace.name}</Text>
-            <Text variant="muted">{workspace.email ?? "No email available"}</Text>
+        <Card style={styles.profileCard}>
+          <View style={styles.profileIdentity}>
+            <View style={styles.avatar}>
+              <Text className="text-2xl font-extrabold text-accent">{initials}</Text>
+            </View>
+            <View style={styles.profileCopy}>
+              <Text variant="title">{workspace.name}</Text>
+              <Text variant="muted">{workspace.email ?? "No email available"}</Text>
+              {workspace.role ? <View style={styles.rolePill}><Text variant="label" className="text-accent">{workspace.role}</Text></View> : null}
+            </View>
           </View>
         </Card>
 
@@ -112,7 +115,7 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   stack: {
-    gap: 24
+    gap: spacing.section
   },
   hero: {
     gap: 4
@@ -120,17 +123,41 @@ const styles = StyleSheet.create({
   avatar: {
     width: 64,
     height: 64,
-    borderRadius: 14,
+    borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: "rgba(87, 241, 219, 0.2)",
+    borderColor: alpha(colors.accent, 0.2),
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(87, 241, 219, 0.1)"
+    backgroundColor: alpha(colors.accent, 0.1)
+  },
+  profileCard: {
+    gap: 0
+  },
+  profileIdentity: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.lg
+  },
+  profileCopy: {
+    flex: 1,
+    gap: spacing.xs
+  },
+  rolePill: {
+    alignSelf: "flex-start",
+    marginTop: spacing.xs,
+    borderRadius: radii.full,
+    borderWidth: 1,
+    borderColor: alpha(colors.accent, 0.22),
+    backgroundColor: alpha(colors.accent, 0.07),
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs
   },
   preferenceRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 12
+    gap: 12,
+    minHeight: 46,
+    paddingVertical: 4
   }
 });

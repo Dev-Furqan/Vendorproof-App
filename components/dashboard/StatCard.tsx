@@ -4,7 +4,7 @@ import { StyleSheet, View } from "react-native";
 import { Card } from "@/components/ui/Card";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { Text } from "@/components/ui/Text";
-import { colors } from "@/lib/theme";
+import { alpha, colors, radii, shadows, spacing } from "@/lib/theme";
 import type { DashboardStat } from "@/types/compliance";
 
 const metaByStatus = {
@@ -20,14 +20,16 @@ export function StatCard({ stat, delay = 0 }: { stat: DashboardStat; delay?: num
   const meta = metaByStatus[stat.status];
 
   return (
-    <Card className="p-3" style={styles.card}>
+    <Card className="p-3" style={[styles.card, { borderColor: alpha(meta.color, 0.3) }]}>
       <View style={styles.header}>
-        <Text variant="label">{stat.label}</Text>
-        <MaterialCommunityIcons name={meta.icon as never} size={20} color={meta.color} />
+        <View style={[styles.icon, { backgroundColor: alpha(meta.color, 0.1) }]}>
+          <MaterialCommunityIcons name={meta.icon as never} size={18} color={meta.color} />
+        </View>
       </View>
       <View style={styles.valueBlock}>
-        <AnimatedNumber value={stat.value} duration={240 + delay} className={meta.text} />
-        <Text variant="muted">{stat.helper ?? "Live count"}</Text>
+        <AnimatedNumber value={stat.value} duration={240 + delay} className={meta.text} style={styles.number} />
+        <Text variant="label" style={{ color: meta.color }}>{stat.label}</Text>
+        <Text variant="muted" style={styles.helper}>{stat.helper ?? "Live count"}</Text>
       </View>
     </Card>
   );
@@ -35,8 +37,13 @@ export function StatCard({ stat, delay = 0 }: { stat: DashboardStat; delay?: num
 
 const styles = StyleSheet.create({
   card: {
-    minHeight: 124,
-    justifyContent: "space-between"
+    flex: 1,
+    minWidth: 0,
+    minHeight: 154,
+    justifyContent: "space-between",
+    padding: spacing.md,
+    borderRadius: radii.lg,
+    ...shadows.card
   },
   header: {
     flexDirection: "row",
@@ -45,6 +52,22 @@ const styles = StyleSheet.create({
     gap: 8
   },
   valueBlock: {
-    gap: 0
+    gap: 2
+  },
+  icon: {
+    width: 34,
+    height: 34,
+    borderRadius: radii.md,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  number: {
+    fontSize: 42,
+    lineHeight: 46
+  },
+  helper: {
+    marginTop: 2,
+    fontSize: 11,
+    lineHeight: 15
   }
 });
